@@ -1,0 +1,31 @@
+{% extends 'vendor/vendorbase.html' %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+
+
+{% block content %}
+
+
+<div class="container">
+    <div class="col-md-10 offset-md-1 mt-5">
+        
+        <div class="jumbotron">
+            <h1 class="display-4">Make Your Menu</h1>
+            <hr class="my-4">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+               {{ form|crispy}}
+            
+            <p class="lead">
+                <button type="submit" class="btn btn-success btn-lg">Save</button>
+            </p>
+        </form>
+          </div>
+
+
+    </div>
+</div>
+
+{% endblock content %}
+
+   

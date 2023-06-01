@@ -1,0 +1,15 @@
+{% autoescape off %} 
+    Hi {{ superuser.first_name }},
+
+    M/s {{vendor.vendor_name}} is applying for becoming vendor
+    
+    Please click on the link below to activate the application for vendor  
+   
+    http://{{ domain }}{% url 'vendor_activate' vidb64=vid token=token %} 
+    
+
+    
+    
+    Thank You. 
+
+{% endautoescape %}

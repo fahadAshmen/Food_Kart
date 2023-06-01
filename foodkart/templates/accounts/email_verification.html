@@ -1,0 +1,14 @@
+{% autoescape off %} 
+    Hi {{ user.first_name }},
+    
+    Please click on the link below to activate your email account: {{ user.email }}
+    
+    Please verify it's you. 
+    
+    http://{{ domain }}{% url 'activate' uidb64=uid token=token %} 
+    
+    Ignore this mail if its not you... 
+    
+    Thank You. 
+
+{% endautoescape %}

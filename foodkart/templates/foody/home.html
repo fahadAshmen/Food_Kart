@@ -1,0 +1,144 @@
+{% extends 'foody/base.html' %} 
+{% load static %}
+
+{% block content%}
+
+<!-- slider Area Start -->
+<div class="slider-area ">
+    <!-- Mobile Menu -->
+    <div class="slider-active">
+        <div class="single-slider slider-height" data-background="{% static 'img/hero/yellow_img_food.jpg'%}">
+            <div class="container">
+                <div class="row d-flex align-items-center justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 d-none d-md-block">
+                        <div class="hero__img" data-animation="bounceIn" data-delay=".4s">
+                            <img src="{% static 'img/hero/hero_man.png'%}" alt="">
+                        </div>
+                    </div>
+                    <div class="col-xl-5 col-lg-5 col-md-5 col-sm-8">
+                        <div class="hero__caption">
+                            <h1 data-animation="fadeInRight" data-delay=".6s">Grab</h1>
+                            <p data-animation="fadeInRight" data-delay=".8s">Your Plate!</p>
+                            <!-- Hero-btn -->
+                            <div class="hero__btn" data-animation="fadeInRight" data-delay="1s">
+                                <a href="industries.html" class="btn hero-btn">Order Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+<!-- slider Area End-->
+
+<!-- Nav Card -->
+<br>
+<br>
+
+{% comment %} <div class="tab-content" id="nav-tabContent">   
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      
+
+
+     
+    </div>
+</div> {% endcomment %}
+
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <h2 class="pl-3">Top Restaurants in town</h2>
+      <div class="container-fluid">
+        <div class="row">
+            {% for product in products  %}
+          <div class="col-md-3 mb-4">
+            <div class="card" style="width: 18rem;">
+              <img class="card-img-top" width="100px" height="200px" src="{{product.image.url}}" alt="Card image cap">
+              <div class="card-body">
+                <h4 style="font-family: Arial, Helvetica, sans-serif" class="card-title"><b>{{product.vendor}}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-family: Arial, Helvetica, sans-serif;">₹{{product.price}}</span></h4>
+                <p class="card-text"> <b>{{product.food_title}}</b>&nbsp;&nbsp;&nbsp;&nbsp;<span>{% if product.is_veg is True %}<span>Veg</span>&nbsp;&nbsp;<span><i class="fa-regular fa-circle-stop fa-lg"  style="color: #39c042;"></i></span>
+                    {%else%}<span>Non-Veg</span>&nbsp;&nbsp;<span><i class="fa-regular fa-square-caret-up fa-lg" style="color: #953a13;"></i></span>                    
+                    {% endif %}</span></p>
+                <a href="#" class="btn btn-success mr-3">
+                    <i class="fas fa-shopping-cart cart-icon"></i>
+                  </a>
+                  <a href="#" class="btn btn-outline-danger mt-2 wishlist-btn mb-2 mr-3" onclick="addToWishlist(this)">
+                    <i class="fas fa-heart"></i>
+                  </a>
+                 {% comment %} modal {% endcomment %}
+                  <!-- Default dropright button -->
+                <div class="btn-group dropright">
+                    <a href="#" class="btn btn-warning dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa-solid fa-square-chevron-right fa-beat" style="color: #e67b60;"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                    <!-- Dropdown menu links -->
+                    
+                    <ul><h1> Menu</h1>
+                        <li>Looks</li>
+                        <li>ffuji</li>
+                    </ul>
+                    
+                    </div>
+                </div>
+  
+                  {% comment %} Modal ends {% endcomment %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% comment %} <div class="col-md-3 mb-4">
+            <div class="card" style="width: 18rem;">
+              <img class="card-img-top" src="https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).webp" alt="Card image cap">
+              <div class="card-body">
+                <h4 class="card-title"><b>Food Name</b>&nbsp;&nbsp;&nbsp;<span style="font-family: Arial, Helvetica, sans-serif;">₹50</span></h4>
+                <p class="card-text"> <b>Vendor Name</b>&nbsp;&nbsp;&nbsp;&nbsp;<span>Veg</span></p>
+                <a href="#" class="btn btn-success mr-3">
+                    <i class="fas fa-shopping-cart cart-icon"></i> Add to Cart
+                  </a>
+                  <a href="#" class="btn btn-outline-danger mt-2 wishlist-btn mb-2" onclick="addToWishlist(this)">
+                    <i class="fas fa-heart"></i>
+                  </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="card" style="width: 18rem;">
+              <img class="card-img-top" src="https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).webp" alt="Card image cap">
+              <div class="card-body">
+                <h4 class="card-title"><b>Food Name</b>&nbsp;&nbsp;&nbsp;<span style="font-family: Arial, Helvetica, sans-serif;">₹50</span></h4>
+                <p class="card-text"> <b>Vendor Name</b>&nbsp;&nbsp;&nbsp;&nbsp;<span>Veg</span></p>
+                <a href="#" class="btn btn-success mr-3">
+                    <i class="fas fa-shopping-cart cart-icon"></i> Add to Cart
+                  </a>
+                  <a href="#" class="btn btn-outline-danger mt-2 wishlist-btn mb-2" onclick="addToWishlist(this)">
+                    <i class="fas fa-heart"></i>
+                  </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="card" style="width: 18rem;">
+              <img class="card-img-top" src="https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).webp" alt="Card image cap">
+              <div class="card-body">
+                <h4 class="card-title"><b>Food Name</b>&nbsp;&nbsp;&nbsp;<span style="font-family: Arial, Helvetica, sans-serif;">₹50</span></h4>
+                <p class="card-text"> <b>Vendor Name</b>&nbsp;&nbsp;&nbsp;&nbsp;<span>Veg</span></p>
+                <a href="#" class="btn btn-success mr-3">
+                    <i class="fas fa-shopping-cart cart-icon"></i> Add to Cart
+                  </a>
+                  <a href="#" class="btn btn-outline-danger mt-2 wishlist-btn mb-2" onclick="addToWishlist(this)">
+                    <i class="fas fa-heart"></i>
+                  </a>
+              </div>
+            </div>
+          </div> {% endcomment %}
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<br>
+{% endblock content %}

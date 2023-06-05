@@ -1,8 +1,13 @@
-from django.shortcuts import render, HttpResponse
-from django.http import HttpResponse
+from django.shortcuts import render
+from store.models import Product
+
 
 
 # Create your views here.
 
 def hotel_list(request):
-    return render(request,"dine/hotel.html")
+    product = Product.objects.filter(is_available=True)
+    context ={
+        'products' : product
+    }
+    return render(request,"dine/hotel.html", context)

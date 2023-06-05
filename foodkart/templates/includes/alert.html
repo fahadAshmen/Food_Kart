@@ -3,7 +3,7 @@
     {% for message in messages %}
     <div id="messages" class="container">
     <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">
-        <button type="button" class="close" data-dismiss="alert"<span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
         {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error: {% endif %}
         {{ message }}
     </div>
@@ -11,3 +11,35 @@
     {% endfor %}
 
 {% endif %} 
+
+
+{% comment %} 
+{% if vendor_profile.errors %}
+<div class="alert alert-danger">
+    {% for field in vendor_profile %}
+        {% for error in field.errors %}
+            <strong>{{ field.label }}:</strong> {{ error }}
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if user_reg.errors %}
+<div class="alert alert-danger">
+    {% for field in user_reg %}
+        {% for error in field.errors %}
+            <strong>{{ field.label }}:</strong> {{ error }}
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if user_profile.errors %}
+<div class="alert alert-danger">
+    {% for field in user_profile %}
+        {% for error in field.errors %}
+            <strong>{{ field.label }}:</strong> {{ error }}
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endif %} {% endcomment %}

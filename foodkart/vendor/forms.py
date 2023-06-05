@@ -1,5 +1,7 @@
 from django import forms
 from accounts.models import Account
+from store.validators import validate_image
+from . models import Vendor
 
 
 class VendorRegistrationForm(forms.ModelForm):
@@ -15,7 +17,7 @@ class VendorRegistrationForm(forms.ModelForm):
         'placeholder':'enter name',
         'class': 'form-control',})) 
 
-    
+    # vendor_license = forms.FileField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}), validators=[validate_image])
      
     class Meta:
         model = Account
@@ -45,4 +47,21 @@ class VendorRegistrationForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Password does not match"
             )
-
+            
+            
+class VendorForm(forms.ModelForm):
+    class Meta:
+        model = Vendor
+        fields = ['vendor_name',]
+        
+    def __init__(self, *args,**kwargs):                    
+        super(VendorForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+                
+                
+                     
+    # def __init__(self, *args,**kwargs):
+    #     super(UserProfileForm, self).__init__(*args,**kwargs)
+    #     for field in self.fields:
+    #         self.fields[field].widget.attrs['class'] = 'form-control'

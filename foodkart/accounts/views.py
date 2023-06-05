@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import login, authenticate, logout
 from . forms import RegistrationForm
-from . models import Account
+from . models import Account, UserProfile
 from django.contrib import messages, auth
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -34,6 +34,7 @@ def user_register(request):
             user = Account.objects.create_user(first_name=first_name,last_name=last_name,email=email,username=username,password=password)
             user.phone_number=phone_number
             user.save()
+            UserProfile.objects.create(user=user)
             #USER ACTIVATION
             current_site= get_current_site(request)
             print(current_site)
@@ -185,6 +186,7 @@ def register_vendor(request):
             user = Account.objects.create_user(email=email,first_name=first_name,last_name=last_name,password=password,username=username)
             user.phone_number=phone_number
             user.save()
+            UserProfile.objects.create(user=user)
             print(user.pk)
             #USER ACTIVATION
             current_site= get_current_site(request)
@@ -256,7 +258,7 @@ def vendor_activate(request, vidb64, token):
         
 #VENDOR DASHBOARD
 @login_required(login_url='signin')
-def vendorDashboard(request):
+def vendorDashboard(request):    
     return render(request, 'vendor/vendorDashboard.html')
     # return render(request, 'vendor/vendorDashboard.html')
     

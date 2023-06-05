@@ -116,6 +116,7 @@
                                             <li><a href="contact.html">Contact</a></li> -->
                                             {% endif %}
                                         </ul>
+                                       
                                     </nav>
                                 </div>
                             </div>
@@ -146,10 +147,20 @@
                                     </div>
 
                                     {% endif %}
+                                 
+
                                     <a href="#" class="widget-header pl-3 ml-3">
                                         <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
                                         <span class="badge badge-pill badge-danger notify">0</span>
                                     </a>
+                                    <div class="widget-header ml-5">
+                                        {% comment %} <small class="title text-muted">Welcome guest!</small> {% endcomment %}
+                                        <div> 
+                                            <a class="btn btn-danger btn-sm" href="{% url 'hotel_list' %}">Dine</a> <span class="dark-transp"> </span>
+                                            {% comment %} <a href="{% url 'signin' %}"> Sign in</a> {% endcomment %}
+                                        </div>
+                                    </div>
+
                                 </div> <!-- widgets-wrap.// -->
                             </div> <!-- col.// -->
                 </div> <!-- row.// -->
@@ -170,7 +181,7 @@
 
     {% endblock content %}
 
-    <footer>
+    <footer> 
 
         <!-- Footer Start-->
         <div class="footer-area footer-padding bg-secondary">

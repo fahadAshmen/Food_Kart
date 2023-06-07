@@ -1,5 +1,5 @@
 from django import forms
-from . models import Account, UserProfile
+from . models import Account, UserProfile, VendorProfile
 from store.validators import validate_image
 
 class RegistrationForm(forms.ModelForm):
@@ -45,6 +45,20 @@ class UserProfileForm(forms.ModelForm):
         
     def __init__(self, *args,**kwargs):
         super(UserProfileForm, self).__init__(*args,**kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+            
+
+class VendorProfileForm(forms.ModelForm):
+    address = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Start typing...', 'required': 'required'}))
+    profile_picture = forms.ImageField(required=False, error_messages={'invalid':"Image files only"}, widget=forms.FileInput, validators=[validate_image])
+        
+    class Meta:
+        model = VendorProfile
+        fields = ['profile_picture', 'address', 'country', 'state', 'city', 'pin_code']
+        
+    def __init__(self, *args,**kwargs):
+        super(VendorProfileForm, self).__init__(*args,**kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
             

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import login, authenticate, logout
 from . forms import RegistrationForm
-from . models import Account, UserProfile
+from . models import Account, UserProfile, VendorProfile
 from django.contrib import messages, auth
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from vendor.models import Vendor
 from vendor.forms import VendorRegistrationForm
+from django.template.defaultfilters import slugify
 
 # VERIFICATION EMAIL
 from django.contrib.sites.shortcuts import get_current_site
@@ -17,6 +18,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
+
 
 # Create your views here.
 
@@ -186,7 +188,7 @@ def register_vendor(request):
             user = Account.objects.create_user(email=email,first_name=first_name,last_name=last_name,password=password,username=username)
             user.phone_number=phone_number
             user.save()
-            UserProfile.objects.create(user=user)
+            VendorProfile.objects.create(user=user)
             print(user.pk)
             #USER ACTIVATION
             current_site= get_current_site(request)
@@ -201,9 +203,13 @@ def register_vendor(request):
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
             #VENDOR ACTIVATION
+            vendor_name=form.cleaned_data['vendor_name']
             vendor = Vendor.objects.create(vendor=user,
                 vendor_name=form.cleaned_data['vendor_name'],
                 is_vendor=False)
+            vendor.vendor_slug = slugify(vendor_name)+'-'+str(user.id)
+            vendor.save()
+            
             print(vendor.pk)
             superuser = Account.objects.get(is_admin=True)
             print(superuser)

@@ -100,5 +100,19 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.email
     
+class VendorProfile(models.Model):
+    user = models.OneToOneField(Account, on_delete=models.CASCADE)
+    profile_picture=models.ImageField(upload_to='vendors/profile_picture',blank=True,null=True)
+    address=models.CharField(max_length=250,blank=True,null=True)
+    country=models.CharField(max_length=15,blank=True,null=True)
+    state=models.CharField(max_length=10,blank=True,null=True)
+    city=models.CharField(max_length=10,blank=True,null=True)
+    pin_code=models.CharField(max_length=10,blank=True,null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.user.email
+    
     
     

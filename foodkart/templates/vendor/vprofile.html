@@ -106,53 +106,53 @@
                 {{user_reg.phone_number}}
             </div>
             <div class="form-group col-md-6">
-                <label for="{{vendor_profile.vendor_name.id_for_label}}">Vendor Name</label>
-                {{vendor_profile.vendor_name}}
+                <label for="{{vendor_data.vendor_name.id_for_label}}">Vendor Name</label>
+                {{vendor_data.vendor_name}}
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="{{user_profile.profile_picture.id_for_label}}">Profile Picture</label>
-                {{user_profile.profile_picture}}
+                <label for="{{vendor_profile.profile_picture.id_for_label}}">Profile Picture</label>
+                {{vendor_profile.profile_picture}}
             </div>
             <div style="width: 150px; height: 150px; border: 1px solid;">
-                <img src="{{user_profile.profile_picture.url}}" width="150px" height="150px" alt="Profile Picture">
+                <img src="{{vendor_profile.profile_picture.url}}" width="150px" height="150px" alt="Profile Picture">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group col-lg-12">
-                <label for="{{user_profile.address.id_for_label}}">Address</label>
-                {{user_profile.address}}
+                <label for="{{vendor_profile.address.id_for_label}}">Address</label>
+                {{vendor_profile.address}}
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="{{user_profile.country.id_for_label}}">Country</label>
-                {{user_profile.country}}
+                <label for="{{vendor_profile.country.id_for_label}}">Country</label>
+                {{vendor_profile.country}}
             </div>
             <div class="form-group col-md-6">
-                <label for="{{user_profile.state.id_for_label}}">State</label>
-                {{user_profile.state}}
+                <label for="{{vendor_profile.state.id_for_label}}">State</label>
+                {{vendor_profile.state}}
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="{{user_profile.city.id_for_label}}">City</label>
-                {{user_profile.city}}
+                <label for="{{vendor_profile.city.id_for_label}}">City</label>
+                {{vendor_profile.city}}
             </div>
             <div class="form-group col-md-6">
-                <label for="{{user_profile.pin_code.id_for_label}}">Pincode</label>
-                {{user_profile.pin_code}}
+                <label for="{{vendor_profile.pin_code.id_for_label}}">Pincode</label>
+                {{vendor_profile.pin_code}}
             </div>
         </div>
 
 
 
 
-        {% if vendor_profile.errors %}
+        {% if vendor_data.errors %}
         <div class="alert alert-danger">
-            {% for field in vendor_profile %}
+            {% for field in vendor_data %}
                 {% for error in field.errors %}
                     <strong>{{ field.label }}:</strong> {{ error }}
                 {% endfor %}
@@ -170,9 +170,9 @@
         </div>
     {% endif %}
     
-    {% if user_profile.errors %}
+    {% if vendor_profile.errors %}
         <div class="alert alert-danger">
-            {% for field in user_profile %}
+            {% for field in vendor_profile %}
                 {% for error in field.errors %}
                     <strong>{{ field.label }}:</strong> {{ error }}
                 {% endfor %}

@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404,HttpResponse
 from store.forms import ProductForm
 from store.models import Product
 from .models import Vendor
-from accounts.forms import RegistrationForm, UserProfileForm, UserForm
+from accounts.forms import RegistrationForm, VendorProfileForm, UserForm
 from . forms import VendorRegistrationForm, VendorForm
 from accounts.forms import UserProfileForm
-from accounts.models import UserProfile, Account
+from accounts.models import UserProfile, VendorProfile
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -39,29 +39,23 @@ from django.contrib.auth.decorators import login_required
 #         'up':up
 #     }
 #     return render(request, 'vendor/vprofile.html',context)        
-            
-    
-    
- 
-    
-    
-    
+               
     
 def vprofile(request):
     user = request.user
-    user_details = get_object_or_404(UserProfile, user=user)
+    vendor_profile_details = get_object_or_404(VendorProfile, user=user)
     vendor_details = get_object_or_404(Vendor, vendor=user)
     if request.method=='POST':
-        vendor_profile = VendorForm(request.POST,instance=vendor_details)
+        vendor_data = VendorForm(request.POST,instance=vendor_details)
         user_reg = UserForm(request.POST,instance=user)
-        user_profile = UserProfileForm(request.POST,request.FILES,instance=user_details)
-        if vendor_profile.is_valid() and user_reg.is_valid() and user_profile.is_valid():
-            vendor = vendor_profile.save(commit=False)  # Create vendor object without saving
+        vendor_profile = VendorProfileForm(request.POST,request.FILES,instance=vendor_profile_details)
+        if vendor_data.is_valid() and user_reg.is_valid() and vendor_profile.is_valid():
+            vendor = vendor_data.save(commit=False)  # Create vendor object without saving
             vendor.vendor = request.user  # Assign the vendor field
             vendor.save()  # Save the vendor object  
                
             user_reg.save()
-            user_profile.save()
+            vendor_profile.save()
             messages.success(request,'Your Profile has been updated')
             return redirect('vprofile')
         else:
@@ -76,14 +70,14 @@ def vprofile(request):
                 messages.error(request, error)
             return redirect('vprofile')
     else:
-        vendor_profile = VendorForm(instance=vendor_details)
+        vendor_data = VendorForm(instance=vendor_details)
         user_reg = UserForm(instance=user)
-        user_profile = UserProfileForm(instance=user_details)
+        vendor_profile = VendorProfileForm(instance=vendor_profile_details)
     context = {
-        'vendor_profile':vendor_profile,
+        'vendor_data':vendor_data,
         'user_reg': user_reg,
-        'user_profile':user_profile,
-        'user_details':user_details
+        'vendor_profile':vendor_profile,
+        'vendor_details':vendor_profile_details
     }
     return render(request, 'vendor/vprofile.html',context)
 

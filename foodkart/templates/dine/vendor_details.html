@@ -1,0 +1,83 @@
+{% extends 'foody/base.html' %}
+{%load static %}
+
+
+{% block content %}
+
+ <h1>Vendor Details</h1>
+
+ <section style="background-color: #eee;">
+  <div class="container py-5">
+    {% for product in products %}
+    <div class="row justify-content-center mb-3">
+      <div class="col-md-12 col-xl-10">
+        <div class="card shadow-0 border rounded-3">
+          <div class="card-body">
+            
+            <div class="row">              
+              <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                <div class="bg-image hover-zoom ripple rounded ripple-surface" style="width: 150; height: 150px;" >
+                  {% if product.image %}  
+                  <img width="150px" height="150px" src="{{product.image.url}}" alt="Product Image" class="w-100" />
+                    {% else %}
+                  <img src="{% static 'img-default.profile.jpg' %}" alt="Product Image" class="w-100" />  
+                  {% endif %}
+                  <a href="#!">
+                    <div class="hover-overlay">
+                      <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-6 col-xl-6">
+                <h5>{{product.food_title}}</h5>
+                <div class="d-flex flex-row">
+                  <div class="text-danger mb-1 me-2">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                  </div>
+                  <span>310</span>
+                </div>
+                {% comment %} <div class="mt-1 mb-0 text-muted small">
+                  <span>{{product.description}}</span>
+                </div> {% endcomment %}
+                <div class="mb-2 text-muted small">
+                  {% if product.is_veg is True %}
+                  <span>Veg</span>&nbsp;&nbsp;<span><i class="fa-regular fa-circle-stop fa-lg"  style="color: #39c042;"></i></span>
+                  {% else %}
+                  <span>Non-Veg</span>&nbsp;&nbsp;<span><i class="fa-regular fa-square-caret-up fa-lg" style="color: #953a13;"></i></span>                    
+                  
+                  {% endif %}                    
+                </div> 
+                <p class="text-truncate mb-4 mb-md-0">
+                  {{product.description}}
+                </p>
+              </div>
+              <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                <div class="d-flex flex-row align-items-center mb-1">
+                  <h4 class="mb-1 me-1">₹{{product.price}}</h4>
+                </div>
+                <div class="d-flex flex-column mt-4">
+                  <button class="btn btn-warning btn-sm" type="button">Add to Cart</button>
+                  <button class="btn btn-success btn-sm mt-2" type="button">Add to wishlist</button>
+                </div>
+                <div class="price-holder">
+                  <span class="price">€Price</span>
+                  <a href="#" class="decrease_cart" data-id="#" data-url="#"><i class="icon-minus text-color"></i></a> <!--style="margin-right: 28px;"><-->
+                  <label id="qty-{{food.id}}">0</label>
+                  <a href="#" class="add_to_cart" data-id="#" data-url="#"><i class="icon-plus text-color"></i></a>
+              </div>
+              </div>              
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div> 
+    {% endfor %}   
+  </div>
+</section>
+
+{% endblock content %}

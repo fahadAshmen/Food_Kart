@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from dine import views as DineViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +26,11 @@ urlpatterns = [
     path('accounts/',include('accounts.urls')),
     path('vendor/',include('vendor.urls')),
     path('dine/',include('dine.urls')),
+    
+    #CART
+    path('cart_page/',DineViews.cart,name='cart'),
+    
+    #CHECKOUT
+    path('checkout/',DineViews.checkout,name='checkout'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

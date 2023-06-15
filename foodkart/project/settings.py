@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'vendor',   #new
     'store',    #new
     'dine',     #new
+    'orders',   #new    
     'crispy_forms',
     'crispy_bootstrap5'
 ]
@@ -76,6 +77,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'dine.context_processor.get_cart_counter',
+                'dine.context_processor.get_cart_amount',
             ],
         },
     },

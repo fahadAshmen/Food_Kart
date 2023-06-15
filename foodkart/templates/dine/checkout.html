@@ -1,0 +1,209 @@
+
+{% extends 'foody/base.html' %}
+{%load static %}
+
+
+{% block content %}
+
+
+
+    
+<section class="header-main border-bottom mt-5">
+   <div class="container">
+    
+    
+    
+    <!-- ============================ COMPONENT 2 ================================= -->
+    <div class="row">
+            <main class="col-md-6 col-lg-6 col-sm-12">    
+    
+            <article class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Billing Address</h4>
+                <hr>
+                <form action="#" method="post">
+                    {% csrf_token %}                    
+                    <div class="row">
+                        <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                            <label>First name:</label>
+                            {{form.first_name}}
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                            <label>Last name:</label>
+                            {{form.last_name}}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                            <label>Phone:</label>
+                            {{form.phone}}
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                            <label>Email:</label>
+                            {{form.email}}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-12 col-sm-12 col-lg-12">
+                            <label>Address*:</label>
+                            {{form.address}}
+                        </div>                        
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                            <label>Country:</label>
+                            {{form.country}}
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                            <label>State:</label>
+                            {{form.state}}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                            <label>City:</label>
+                            {{form.city}}
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12 col-lg-6">
+                            <label>Pin-code:</label>
+                            {{form.pin_code}}
+                        </div>
+                    </div>
+                    
+                
+            </div> <!-- card-body.// -->
+            </article> <!-- card.// -->
+            
+            
+        
+            </main> <!-- col.// -->
+            <aside class="col-md-6 col-lg-6 col-sm-12">
+                <div class="card">
+            <div class="card-body">
+
+                
+<div class="container">
+    {% comment %} {% if cart_items %} {% endcomment %}
+        
+      
+            <div class="row mb-3">
+                {% for item in cart_items %}
+            <div id="cart-item{{item.id}}" class="col-12 mt-3">
+                <div class="card shadow-0 border rounded-3">
+                 <div  class="card-body"> 
+                  <div class="row">               
+                    <div class="col-md-2 col-lg-2 col-sm-4 mb-4 mb-lg-0">
+                        <div class="bg-image hover-zoom ripple rounded ripple-surface">
+                        {% if item.product.image %}  
+                        <img  src="{{item.product.image.url}}" alt="Product Image" class="w-100" />
+                            {% else %}
+                        <img src="{% static 'img-default.profile.jpg' %}" alt="Product Image" class="w-100" />  
+                        {% endif %}
+                                    {% comment %} <a href="#!">
+                                    <div class="hover-overlay">
+                                    <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                                    </div>
+                                    </a> {% endcomment %}
+                        </div>
+                    </div>
+    
+                    <div class="col-md-6 col-lg-6 col-sm-6">
+                        <h6>{{item.product.food_title}}</h6>
+                        <div class="d-flex flex-row"></div>                   
+                        {% comment %} <p class="text-truncate mb-4 mb-md-0">
+                        {{item.product.description}}
+                        </p> {% endcomment %}
+                        <h5><a href="{% url 'vendor_details' item.product.vendor.vendor_slug %}" class="badge badge-warning" style="text-decoration: None;">{{item.product.vendor}}</a></h5>
+                    </div>
+                        
+                    <div class="col-md-4 col-lg-4 col-sm-2 border-sm-start-none border-start">
+                        <div class="quantity">
+                            <span>{{item.quantity}}QTY</span>
+                        </div>
+                        <div class="d-flex flex-row align-items-center mb-1">
+                        <h5 class="mb-1 me-1">₹{{item.product.price}}</h5>                  
+                        </div>    
+    
+                        {% comment %} <div class="d-flex flex-column mt-4">                    
+                            <div class="col"> 
+                                <div class="input-group input-spinner">
+                                    <div class="input-group-prepend">
+                                        <a href="#" class="btn btn-warning decrease_cart" data-id="{{ item.product.id }}" id="{{item.id}}" data-url="{% url 'decrease_cart' item.product.id %}"><i class="fa fa-minus"></i></a>
+                                    </div>
+                                    <label style="margin-left: 30px;" id="qty-{{item.product.id}}">0</label>
+                                    <div class="input-group-append">
+                                        <a href="#" class="btn btn-warning add_to_cart" data-id="{{ item.product.id }}" data-url="{% url 'add_to_cart' item.product.id %}" style="margin-left: 30px;"><i class="fa fa-plus"></i></a>
+                                    </div>                            
+                                </div> 
+                            </div>
+    
+                                 <div>
+                                    <a href="#" class="btn btn-danger delete_cart mt-2" data-id="{{ item.id }}" data-url="{% url 'delete_cart' item.id %}" style="margin-left: 25px;">Remove item</a>
+                                </div>  
+                        </div>  {% endcomment %}
+    
+                        <span id="qty-{{item.product.id}}" class="item_qty d-none" data-qty="{{item.quantity}}">{{item.quantity}}</span>                     
+                        
+                    </div>            
+                 </div> <!--row *-->
+                </div> <!--card body *-->
+            </div> <!--card body sahdow *-->    
+            </div> <!--card col *-->
+       {% endfor %}
+    {% comment %} {% else%}
+       <div class="text-center p-5">
+        <h2>Cart is empty</h2>
+       </div>
+    {% endif %} {% endcomment %}
+    </div> <!--card row*-->
+    </div><!--container*-->
+
+                <hr>
+                <dl class="dlist-align">
+                    <dt>Total price:</dt>
+                    <dd id="total" class="text-right">₹{{total}}</dd>
+                  </dl>
+
+                  {% for key, values in tax_dict.items %}
+                  {% for x,y in values.items %}
+                         <dl class="dlist-align">
+                         <dt><small>{{key}}</small>-<small>({{x}}%)</small></dt>
+                         <dd id="tax-{{key}}" class="text-right">₹{{y}}</dd>
+                         </dl>
+                   {% endfor %}      
+                 {% endfor %}
+
+                 <dl class="dlist-align">
+                    <dt>Grand Total:</dt>
+                    <dd id="grand-total" class="text-right text-dark b"><strong>₹{{grand_total}}</strong></dd>
+                </dl>
+
+                <hr>
+                <p class="text-center mb-3">
+                    <img src="./images/misc/payments.png" height="26">
+                </p>
+               <button class="btn btn-danger btn-block">Place Order</button> 
+            </div> <!-- card-body.// -->
+        </form> <!--form ends here**-->
+            </div> <!-- card.// -->
+            </aside> <!-- col.// -->
+        </div> <!-- row.// -->
+    
+    <!-- ============================ COMPONENT 2 END//  ================================= -->
+    
+    
+    
+    
+    </div> <!-- container .//  -->
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+    
+
+{% endblock content %}
+
+
+

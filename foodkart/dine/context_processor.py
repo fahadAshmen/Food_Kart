@@ -1,4 +1,4 @@
-from . models import Cart
+from . models import Cart, Tax
 from store.models import Product
 
 def get_cart_counter(request):
@@ -14,3 +14,28 @@ def get_cart_counter(request):
         except:
             cart_count=0
     return dict(cart_count=cart_count)
+
+def get_cart_amount(request):
+    total = 0
+    tax = 0
+    grand_total =0
+    tax_dict={}
+    if request.user.is_authenticated:
+        cart_items= Cart.objects.filter(user=request.user)
+        for item in cart_items:
+            product = Product.objects.get(pk=item.product.id)
+            total += (product.price * item.quantity)
+        
+        get_tax= Tax.objects.filter(is_active=True)
+        for i in get_tax:
+            tax_type = i.tax_type
+            tax_percentage = i.tax_percentage
+            tax_amount = round((total * tax_percentage)/100, 2)
+            tax_dict.update({tax_type:{str(tax_percentage):tax_amount}})
+         
+        for key in tax_dict.values():
+            for i in key.values():
+                tax = tax + i                    
+                        
+        grand_total=total+tax    
+    return dict(total=total, tax=tax, grand_total=grand_total, tax_dict=tax_dict)

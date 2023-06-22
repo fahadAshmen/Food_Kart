@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,6 +79,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'dine.context_processor.get_cart_counter',
                 'dine.context_processor.get_cart_amount',
+                'dine.context_processor.get_paypal_client_id',
+                
             ],
         },
     },
@@ -164,8 +167,16 @@ MESSAGE_TAGS = {
 #SMTP CONFIGURATION
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_PASSWORD = 'optnlgspntxjwudl'
+EMAIL_HOST_PASSWORD = 'cdbyuizlbydihlgr'
 EMAIL_HOST_USER = 'fahadrazakvakeri@gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+
+#paypal
+PAYPAL_CLIENT_ID=config('PAYPAL_CLIENT_ID')
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
+
 

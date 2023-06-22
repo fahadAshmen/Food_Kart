@@ -1,0 +1,222 @@
+
+{% extends 'foody/base.html' %}
+{%load static %}
+
+
+{% block content %}
+
+
+
+    
+<section class="header-main border-bottom mt-5">
+   <div class="container">
+    
+    
+    
+    <!-- ============================ COMPONENT 2 ================================= -->
+    <div class="row">
+            <main class="col-md-8 col-lg-8 col-sm-12">    
+    
+            <article class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Review Your Billing Address</h4>
+                <hr>
+                    <div class="billing-address">
+                        <div><b>{{ order.name }}</b></div>
+                        <div>{{order.address}}</div>
+                        <div>{{order.city}} - {{order.pin_code}}</div>
+                        <div><b>Phone: </b>{{order.phone}}</div>
+                        <div><b>Email: </b>{{order.email}}</div>
+                        <div><b>Payment: </b>{{order.payment_method}}</div>
+                        <br>
+                        <div><a href="{% url 'checkout' %}" class="btn btn-danger">Edit</a></div>
+                        <br>
+                    </div>
+                    
+                
+            </div> <!-- card-body.// -->
+            </article> <!-- card.// -->
+            
+            
+        
+            </main> <!-- col.// -->
+            <aside class="col-md-4 col-lg-4 col-sm-12">
+                <div class="card">
+            <div class="card-body">
+
+                <table class="table">
+                    <tbody>
+                        {% for item in cart_items%}
+                        <tr>
+                            <td><img src="{{item.product.image.url}}" width="40" alt="Food image"></td>
+                            <td><b>{{item.product}}</b></td>
+                            <td>{{item.quantity}}</td>
+                            <td>₹{{item.product.price}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <hr>
+                <div>
+                    <ul>
+                        <li style="list-style-type: none;">Total
+                            <span class="price float-right">
+                                <span class="currency">₹</span>
+                                <span id="total"> {{ total }}</span>
+                            </span>
+                        </li>
+
+                        {% for key, values in tax_dict.items %}
+                        {% for x,y in values.items %}
+                        <li style="list-style-type: none;">
+                            {{key}} <small>({{ x }}%)</small>
+                            <span class="price float-right">
+                                <span class="currency">₹</span>
+                                <span id="tax-{{key}}">{{ y }}</span>
+                            </span>
+                        </li>
+                        {% endfor %}      
+                        {% endfor %}                    
+                        
+                        <li style="list-style-type: none; font-weight: 600;">Grand Total
+                            <span class="price float-right">
+                                <span class="currency">₹</span>
+                                <span id="grand-total"> {{ grand_total }}</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+
+                <!--==========================================================-->
+                {% comment %} <dl class="dlist-align">
+                    <dt>Total price:</dt>
+                    <dd id="total" class="text-right">₹{{total}}</dd>
+                  </dl>
+
+                  {% for key, values in tax_dict.items %}
+                  {% for x,y in values.items %}
+                         <dl class="dlist-align">
+                         <dt><small>{{key}}</small>-<small>({{x}}%)</small></dt>
+                         <dd id="tax-{{key}}" class="text-right">₹{{y}}</dd>
+                         </dl>
+                   {% endfor %}      
+                 {% endfor %}
+
+                 <dl class="dlist-align">
+                    <dt>Grand Total:</dt>
+                    <dd id="grand-total" class="text-right text-dark b"><strong>₹{{grand_total}}</strong></dd>
+                </dl>         {% endcomment %}
+                
+                <!--==========================================================-->
+
+                
+
+                <hr>
+                <!--PAYAPAL BUTTON-->
+                <div id="paypal-button-container"></div>
+            </div> <!-- card-body.// -->
+         
+            </div> <!-- card.// -->
+            </aside> <!-- col.// -->
+        </div> <!-- row.// -->
+
+    
+    <!-- ============================ COMPONENT 2 END//  ================================= -->
+    
+    
+    
+    
+    </div> <!-- container .//  -->
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+
+        var grand_total = "{{grand_total}}"
+        var url = "{% url 'payments' %}"
+        var order_number = "{{order.order_number}}"
+        const csrftoken = getCookie('csrftoken')
+        console.log('csrftoken==>',csrftoken)
+        var order_complete = "{% url 'order_complete' %}"
+
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            // Call your server to set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount:{
+                            value: grand_total
+                        }
+                    }]
+                });
+            }, 
+
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(orderData){
+                    console.log(orderData)
+                    var transaction = orderData.purchase_units[0].payments.captures[0];
+
+                    var transaction_id = transaction.id
+                    var status = orderData.status
+                    var payment_method = 'Paypal'
+                    sendTransaction(transaction_id, status, payment_method)
+                    
+                    // Replace the above to show a success message within this page, e.g.
+                    const element = document.getElementById('paypal-button-container');
+                    element.innerHTML = '';
+                    element.innerHTML = '<h3><i class="fa fa-spinner fa-spin"></i>Please wait....!</h3>';
+                    // Or go to another URL:  actions.redirect('thank_you.html');
+
+                });
+              }
+                
+                    
+        }).render('#paypal-button-container');
+
+        // send the data to payments view to staore data in the database
+        function sendTransaction(transaction_id, status, payment_method){
+        $.ajax({
+            type : 'POST',
+            url : url,
+            data : {
+               'order_number' : order_number,
+               'transaction_id': transaction_id,
+               'payment_method': payment_method,
+               'status': status,
+               'csrfmiddlewaretoken':csrftoken
+            },
+            success: function(response){
+                console.log("response==>", response)
+                window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id 
+            }
+        })
+    }
+    </script>
+    
+
+
+
+{% endblock content %}
+
+
+
+

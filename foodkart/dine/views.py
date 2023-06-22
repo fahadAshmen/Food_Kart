@@ -7,6 +7,7 @@ from store.models import Category, Product
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from orders.forms import OrderForm
+from accounts.models import VendorProfile
 
 
 
@@ -128,7 +129,20 @@ def checkout(request):
     cart_count = cart_items.count()
     if cart_count<=0:
         return redirect ('hotel_list')
-    form = OrderForm()
+    vendor_profile = VendorProfile.objects.get(user=request.user)
+    default_values={
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'phone': request.user.phone_number,
+        'email': request.user.email,
+        'address': vendor_profile.address,
+        'country': vendor_profile.country,
+        'state': vendor_profile.state,
+        'city': vendor_profile.city,
+        'pin_code': vendor_profile.pin_code,
+        
+    }
+    form = OrderForm(initial=default_values)
     context = {
         'form': form,
         'cart_items':cart_items

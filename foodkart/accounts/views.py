@@ -38,8 +38,7 @@ def user_register(request):
             user.save()
             UserProfile.objects.create(user=user)
             #USER ACTIVATION
-            current_site= get_current_site(request)
-            print(current_site)
+            current_site= get_current_site(request)           
             mail_subject = "Please activate your account"
             message = render_to_string('accounts/email_verification.html',{
                 'user': user,

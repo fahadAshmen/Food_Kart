@@ -32,5 +32,8 @@ urlpatterns = [
     
     #CHECKOUT
     path('checkout/',DineViews.checkout,name='checkout'),
+
+    #Place Order
+    path('orders/',include('orders.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

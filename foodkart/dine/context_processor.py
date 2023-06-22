@@ -1,5 +1,6 @@
 from . models import Cart, Tax
 from store.models import Product
+from django.conf import settings
 
 def get_cart_counter(request):
     cart_count=0
@@ -39,3 +40,10 @@ def get_cart_amount(request):
                         
         grand_total=total+tax    
     return dict(total=total, tax=tax, grand_total=grand_total, tax_dict=tax_dict)
+
+
+
+def get_paypal_client_id(request):
+    return {'PAYPAL_CLIENT_ID': settings.PAYPAL_CLIENT_ID}
+
+

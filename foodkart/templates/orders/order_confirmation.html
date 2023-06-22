@@ -1,0 +1,15 @@
+{% autoescape off %} 
+    {% comment %} Hi {{ user.first_name }},
+    
+    Hai {{user.first_name}} {% endcomment %}
+    
+    your order number is {{order.order_number}} 
+    {{order.name}}
+    {{order.payment_method}}
+    {{transaction.id}}
+    
+    Ignore this mail if its not you... 
+    
+    Thank You. 
+
+{% endautoescape %}

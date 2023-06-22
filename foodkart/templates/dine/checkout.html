@@ -21,7 +21,7 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Billing Address</h4>
                 <hr>
-                <form action="#" method="post">
+                <form action="{% url 'place_order' %}" method="post">
                     {% csrf_token %}                    
                     <div class="row">
                         <div class="form-group col-md-6 col-sm-12 col-lg-6">
@@ -122,7 +122,7 @@
                         
                     <div class="col-md-4 col-lg-4 col-sm-2 border-sm-start-none border-start">
                         <div class="quantity">
-                            <span>{{item.quantity}}QTY</span>
+                            <span>{{item.quantity }} QTY</span>
                         </div>
                         <div class="d-flex flex-row align-items-center mb-1">
                         <h5 class="mb-1 me-1">₹{{item.product.price}}</h5>                  
@@ -163,7 +163,38 @@
     </div><!--container*-->
 
                 <hr>
-                <dl class="dlist-align">
+                <div>
+                    <ul>
+                        <li style="list-style-type: none;">Total
+                            <span class="price float-right">
+                                <span class="currency">₹</span>
+                                <span id="total"> {{ total }}</span>
+                            </span>
+                        </li>
+
+                        {% for key, values in tax_dict.items %}
+                        {% for x,y in values.items %}
+                        <li style="list-style-type: none;">
+                            {{key}} <small>({{ x }}%)</small>
+                            <span class="price float-right">
+                                <span class="currency">₹</span>
+                                <span id="tax-{{key}}">{{ y }}</span>
+                            </span>
+                        </li>
+                        {% endfor %}      
+                        {% endfor %}                    
+                        
+                        <li style="list-style-type: none; font-weight: 600;">Grand Total
+                            <span class="price float-right">
+                                <span class="currency">₹</span>
+                                <span id="grand-total"> {{ grand_total }}</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--===============================================-->
+                {% comment %} <dl class="dlist-align">
                     <dt>Total price:</dt>
                     <dd id="total" class="text-right">₹{{total}}</dd>
                   </dl>
@@ -180,13 +211,27 @@
                  <dl class="dlist-align">
                     <dt>Grand Total:</dt>
                     <dd id="grand-total" class="text-right text-dark b"><strong>₹{{grand_total}}</strong></dd>
-                </dl>
+                </dl> {% endcomment %}
+                <!---=====================================================-->
 
                 <hr>
                 <p class="text-center mb-3">
                     <img src="./images/misc/payments.png" height="26">
                 </p>
-               <button class="btn btn-danger btn-block">Place Order</button> 
+                <h5><strong>SELECT PAYMENT METHOD</strong></h5>
+                <span class="text-danger" id='paymentMethodError'></span>
+                <div class="payment-method">
+                  <label>
+                    <input type="radio" name="payment_method" value="Paypal"></input>
+                    <img width="100" src="{% static 'img/custom_img/paypal.png' %}">
+                  </label> 
+                  <label>
+                    <input type="radio" name="payment_method" value="Razorpay"></input>
+                    <img width="100" src="{% static 'img/custom_img/razorpay-logo-png.png' %}">
+                  </label> 
+                </div> 
+                <hr>
+               <button onclick="return payMethodConfirm();" class="btn btn-danger btn-block">Place Order</button> 
             </div> <!-- card-body.// -->
         </form> <!--form ends here**-->
             </div> <!-- card.// -->
@@ -201,7 +246,28 @@
     </div> <!-- container .//  -->
     </section>
     <!-- ========================= SECTION CONTENT END// ========================= -->
-    
+    <script>
+        function payMethodConfirm(){
+            var payMethod = $("input[name='payment_method']:checked").val()
+            if(! payMethod){
+                $('#paymentMethodError').html('Select Payment Method');
+                return false;                
+            }else{
+                var conf = confirm('You have selected '+payMethod+' as your preferred payment method.\nClick "OK" to continue.')
+                if(conf == true){
+                    return true;
+                }else{
+                    return false;
+                }
+
+            }
+            
+        }
+        $("input[name='payment_method']").on('change',function(){
+              $('#paymentMethodError').html("")
+        })
+
+    </script>
 
 {% endblock content %}
 

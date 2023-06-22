@@ -108,8 +108,37 @@
 		<aside class="col-md-4">
             <div class="card">
               <div class="card-body">
+                    <div>
+                      <ul>
+                          <li style="list-style-type: none;">Total
+                              <span class="price float-right">
+                                  <span class="currency">₹</span>
+                                  <span id="total"> {{ total }}</span>
+                              </span>
+                          </li>
 
-                <dl class="dlist-align">
+                          {% for key, values in tax_dict.items %}
+                          {% for x,y in values.items %}
+                          <li style="list-style-type: none;">
+                              {{key}} <small>({{ x }}%)</small>
+                              <span class="price float-right">
+                                  <span class="currency">₹</span>
+                                  <span id="tax-{{key}}">{{ y }}</span>
+                              </span>
+                          </li>
+                          {% endfor %}      
+                          {% endfor %}                    
+                          
+                          <li style="list-style-type: none; font-weight: 600;">Grand Total
+                              <span class="price float-right">
+                                  <span class="currency">₹</span>
+                                  <span id="grand-total"> {{ grand_total }}</span>
+                              </span>
+                          </li>
+                      </ul>
+                  </div>
+                    <!--========================= PREVIOUS TAX CALCULATION  ==============================-->
+                {% comment %} <dl class="dlist-align">
                   <dt>Total price:</dt>
                   <dd id="total" class="text-right">₹{{total}}</dd>
                 </dl>
@@ -127,18 +156,26 @@
                 <dl class="dlist-align">
                   <dt>Grand Total:</dt>
                   <dd id="grand-total" class="text-right text-dark b"><strong>₹{{grand_total}}</strong></dd>
-                </dl>
+                </dl> {% endcomment %}
 
+                    <!--========================= END PREVIOUS TAX CALCULATION  ==============================-->
 
                 <hr>
-                <p class="text-center mb-3">
+                {% comment %} <p class="text-center mb-3">
                   <img src="./images/misc/payments.png" height="26">
-                </p>
+                </p> {% endcomment %}
+                
                 <a href="{% url 'checkout' %}" class="btn btn-danger btn-block">Proceed to Checkout</a>
               </div> <!-- card-body.// -->
             </div> <!-- card.// -->
           </aside> <!-- col.// -->
 	</div> <!-- row.// -->
+
+
+
+
+
+
 
 
 

@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/',include('accounts.urls')),
     path('vendor/',include('vendor.urls')),
     path('dine/',include('dine.urls')),
+    path('customer/',include('customer.urls')),
     
     #CART
     path('cart_page/',DineViews.cart,name='cart'),

@@ -22,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*#yz3vag_@l)dngj4wrnw@_y9(gr^&q&jo-gm_+j#910x&h%6f'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'vendor',   #new
     'store',    #new
     'dine',     #new
-    'orders',   #new    
+    'orders',   #new 
+    'customer', #new
+       
     'crispy_forms',
     'crispy_bootstrap5'
 ]
@@ -62,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'orders.request_object.RequestObjectMiddleware', #Custom Middleware created to access the request object in models.py
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -98,10 +101,10 @@ AUTH_USER_MODEL = 'accounts.Account'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'foodkart',
-        'USER': 'postgres',
-        'PASSWORD': 'fahad',
-        'HOST': 'localhost',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
         'PORT': '',
     }
 }
@@ -165,12 +168,13 @@ MESSAGE_TAGS = {
 }
 
 #SMTP CONFIGURATION
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_PASSWORD = 'cdbyuizlbydihlgr'
-EMAIL_HOST_USER = 'fahadrazakvakeri@gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_HOST =config('EMAIL_HOST')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+DEFAULT_FROM_EMAIL = 'TEAM FOODY <fahadrazakvakeri@gmail.com>'
+
 
 
 #paypal

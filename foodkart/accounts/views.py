@@ -1,15 +1,19 @@
+import datetime
 from django.shortcuts import render,redirect
 from django.contrib.auth import login, authenticate, logout
 from . forms import RegistrationForm
 from . models import Account, UserProfile, VendorProfile
 from django.contrib import messages, auth
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from . utils import check_role_customer, check_role_vendor
 # from django.http import HttpResponseRedirect
 
 from vendor.models import Vendor
 from vendor.forms import VendorRegistrationForm
 from django.template.defaultfilters import slugify
+
+from orders.models import Order
 
 # VERIFICATION EMAIL
 from django.contrib.sites.shortcuts import get_current_site
@@ -34,6 +38,7 @@ def user_register(request):
             password = form.cleaned_data['password']
             username = email.split("@")[0]
             user = Account.objects.create_user(first_name=first_name,last_name=last_name,email=email,username=username,password=password)
+            user.role= 'CUSTOMER'
             user.phone_number=phone_number
             user.save()
             UserProfile.objects.create(user=user)
@@ -49,8 +54,9 @@ def user_register(request):
             to_email= email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
-            # messages.success(request,'Thankyou for registering with us. We have snt a verification mail. Please verify it.')
-            return redirect('signin/?command=verification&email='+email)
+            # messages.success(request,'Thankyou for registering with us. We have sent a verification mail. Please verify it.')
+            return redirect('signin')
+            # return redirect('signin/?command=verification&email='+email)
     else:
         form = RegistrationForm()
     context = {
@@ -59,32 +65,66 @@ def user_register(request):
    
     return render(request,'accounts/userRegister.html', context)
 
-#LOGIN
+
 def signin(request):
-    if request.method == "POST":
+    if request.user.is_authenticated:
+         return redirect('home_page')
+    elif request.method == "POST":
         email = request.POST['email']
         password = request.POST['password']
         print(email, password)
-        user = authenticate(email=email,password=password)
+        user = authenticate(email=email, password=password)
         print(user)
         if user is not None:
             login(request, user)
-            if request.user.is_vendor and request.user.is_active:        
-                return render(request, 'vendor/vendorDashboard.html')
-            else:
+            if 'next' in request.POST:
+                # Redirect to the 'next' URL specified in the POST data
+                return redirect(request.POST['next'])            
+            elif user.role == 'VENDOR' and request.user.vendor.is_approved:
+                return redirect('vendorDashboard')
+            elif user.role =='CUSTOMER':
                 return redirect('custDashboard')
-        # else:
-        #     return redirect('home_page')
-                 
-            # messages.success(request,"You are logged in")
-            # return redirect('home_page')
+            elif user.role == None and request.user.is_superadmin:
+                return redirect('/admin/')
         else:
-            messages.error(request,'Invalid login credentials')
+            messages.error(request, 'Invalid login credentials')
             return redirect('signin')
     return render(request, 'accounts/signin.html')
 
+
+
+#LOGIN
+# def signin(request):
+#     if request.method == "POST":
+#         email = request.POST['email']
+#         password = request.POST['password']
+#         print(email, password)
+#         user = authenticate(email=email,password=password)
+#         print(user)
+#         if user is not None:
+#             login(request, user)
+#             if user.role == 'VENDOR' and request.user.vendor.is_approved:
+#                 return redirect('vendorDashboard')                        
+#                 # return render(request, 'vendor/vendorDashboard.html')
+
+#             elif user.role =='CUSTOMER':
+#                 return redirect('custDashboard')
+                
+#             else: 
+#                  return redirect('/admin/')
+                 
+#         # else:
+#         #     return redirect('home_page')
+                 
+#             # messages.success(request,"You are logged in")
+#             # return redirect('home_page')
+#         else:
+#             messages.error(request,'Invalid login credentials')
+#             return redirect('signin')
+#     return render(request, 'accounts/signin.html')
+
 #LOGOUT
-@login_required(login_url='signin')
+@login_required(login_url='/accounts/signin/')
 def signout(request):
     logout(request)
     messages.success(request,"You are logged out")
@@ -185,9 +225,11 @@ def register_vendor(request):
             phone_number = form.cleaned_data['phone_number']
             username = email.split("@")[0]
             user = Account.objects.create_user(email=email,first_name=first_name,last_name=last_name,password=password,username=username)
+            user.role= 'VENDOR'
             user.phone_number=phone_number
             user.save()
-            VendorProfile.objects.create(user=user)
+            UserProfile.objects.create(user=user)
+            # VendorProfile.objects.create(user=user)
             print(user.pk)
             #USER ACTIVATION
             current_site= get_current_site(request)
@@ -207,26 +249,24 @@ def register_vendor(request):
                 vendor_name=form.cleaned_data['vendor_name'],
                 is_vendor=False)
             vendor.vendor_slug = slugify(vendor_name)+'-'+str(user.id)
-            vendor.save()
-            
-            print(vendor.pk)
-            superuser = Account.objects.get(is_admin=True)
-            print(superuser)
-            super_email = superuser.email
-            print(super_email)
-            current_site= get_current_site(request)
-            mail_subject = "Request for vendor application"
-            message = render_to_string('accounts/vendor_verification.html',{
-                'vendor': vendor,
-                'domain': current_site,
-                'vid': urlsafe_base64_encode(force_bytes(vendor.pk)),
-                'token': default_token_generator.make_token(user)
-            })
+            vendor.save()            
+            # print(vendor.pk)
+            # superuser = Account.objects.get(is_admin=True)
+            # print(superuser)
+            # super_email = superuser.email
+            # print(super_email)
+            # current_site= get_current_site(request)
+            # mail_subject = "Request for vendor application"
+            # message = render_to_string('accounts/vendor_verification.html',{
+            #     'vendor': vendor,
+            #     'domain': current_site,
+            #     'vid': urlsafe_base64_encode(force_bytes(vendor.pk)),
+            #     'token': default_token_generator.make_token(user)
+            # })
             
 
-            send_email = EmailMessage(mail_subject, message, to=[super_email])
-            send_email.send()
-
+            # send_email = EmailMessage(mail_subject, message, to=[super_email])
+            # send_email.send()
             return redirect('signin')
 
     else:
@@ -239,37 +279,76 @@ def register_vendor(request):
 
 
 #VENDOR REQUEST VALIDATION
-def vendor_activate(request, vidb64, token):
-    try:
-        vid = urlsafe_base64_decode(vidb64).decode()
-        # vendor = Customer._default_manager.get(pk=vid)
-        vendor=Vendor.objects.get(pk=vid)
-        user=vendor.vendor
+# def vendor_activate(request, vidb64, token):
+#     try:
+#         vid = urlsafe_base64_decode(vidb64).decode()
+#         # vendor = Customer._default_manager.get(pk=vid)
+#         vendor=Vendor.objects.get(pk=vid)
+#         user=vendor.vendor
 
-    except(TypeError, ValueError,OverflowError, Vendor.DoesNotExist):
-        vendor = None
+#     except(TypeError, ValueError,OverflowError, Vendor.DoesNotExist):
+#         vendor = None
 
-    if vendor is not None and default_token_generator.check_token(user, token):
-            user.is_vendor = True
-            user.save()
-            vendor.is_vendor = True
-            vendor.save()
+#     if vendor is not None and default_token_generator.check_token(user, token):
+#             user.is_vendor = True
+#             user.save()
+#             vendor.is_vendor = True
+#             vendor.save()
 
-            messages.success(request,"Congratulations!, Your account is activated")
-            return redirect("signin")
-    else:
-            messages.error(request,"Invalid activation link")
-            return redirect("vendor_register")
+#             messages.success(request,"Congratulations!, Your account is activated")
+#             return redirect("signin")
+#     else:
+#             messages.error(request,"Invalid activation link")
+#             return redirect("vendor_register")
         
 #VENDOR DASHBOARD
-@login_required(login_url='signin')
-def vendorDashboard(request):    
-    return render(request, 'vendor/vendorDashboard.html')
+@login_required(login_url='/accounts/signin/')
+@user_passes_test(check_role_vendor)
+def vendorDashboard(request): 
+    
+    vendors = Vendor.objects.filter(vendor=request.user)
+    for vendor in vendors:
+        pass
+    orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).order_by('-created_at')
+    recent_orders = orders[:5]
+
+    # monthly_revenue
+    current_month = datetime.datetime.now().month
+    current_month_orders =orders.filter(vendors__in=[vendor.id], created_at__month=current_month)
+    current_month_revenue=0
+    for i in current_month_orders:
+         if i.get_total_by_vendor():
+              current_month_revenue += i.get_total_by_vendor()['grand_total']    
+
+    #total_revenue
+    total_revenue=0
+    for i in orders:
+         if i.get_total_by_vendor():
+              total_revenue += i.get_total_by_vendor()['grand_total']
+    
+    context = {
+         'orders' : orders,
+         'orders_count' : orders.count(),
+         'recent_orders' : recent_orders,
+         'total_revenue' : total_revenue,
+         'current_month_revenue' : current_month_revenue,
+    }
+
+    return render(request, 'vendor/vendorDashboard.html', context)
     # return render(request, 'vendor/vendorDashboard.html')
     
 #CUSTOMER DASHBOARD
-@login_required(login_url='signin')
+@login_required(login_url='/accounts/signin/')
+@user_passes_test(check_role_customer)
 def custDashboard(request):
-    return render(request, 'accounts/custDashboard.html')
+    orders = Order.objects.filter(user=request.user, is_ordered=True)
+    orders_count = orders.count()
+    recent_orders = orders[:5]
+    context={
+        'orders' : orders,
+        'orders_count' : orders_count,
+        'recent_orders' : recent_orders
+    }
+    return render(request, 'customer/custDashboard.html', context)
 
 

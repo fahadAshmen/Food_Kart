@@ -8,18 +8,12 @@ from django.utils.html import format_html
 
 class CustomAdmin(UserAdmin):
     
-    list_display = ['email', 'username','first_name','last_name','last_login','date_joined','is_active','is_vendor']
-
+    list_display = ['email', 'username','first_name','last_name', 'role','last_login','date_joined','is_active']
     list_display_links= ('email', 'username','first_name','last_name')
-
     readonly_fields = ('last_login','date_joined')
-
     ordering = ('-date_joined',)
-
     filter_horizontal = []
-
     list_filter = []
-
     fieldsets = []
 
 class UserProfileAdmin(admin.ModelAdmin):

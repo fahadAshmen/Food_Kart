@@ -2,12 +2,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from . models import Cart
 from accounts.models import VendorProfile
 from . context_processor import get_cart_counter, get_cart_amount
-from vendor.models import Vendor
+from vendor.models import Vendor, OpeningHour
 from store.models import Category, Product
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from orders.forms import OrderForm
-from accounts.models import VendorProfile
+from accounts.models import UserProfile
+
+from datetime import date, datetime
 
 
 
@@ -15,14 +17,14 @@ from accounts.models import VendorProfile
 
 def hotel_list(request):
     # vendor_profile = VendorProfile.objects.filter()
-    vendor = Vendor.objects.filter(is_vendor=True, vendor__is_active=True)
+    vendor = Vendor.objects.filter(is_approved=True, vendor__is_active=True)
     vendors_count = vendor.count()
     print(vendor)
     context = {
         'vendors': vendor,
         'vendors_count':vendors_count
     }
-    return render(request,"dine/dinedemo.html", context)
+    return render(request,"dine/dine.html", context)
 
 
 #VENDOR MENU DETAILS
@@ -30,14 +32,41 @@ def vendor_details(request, vendor_slug):
     vendor=get_object_or_404(Vendor, vendor_slug=vendor_slug)
     
     product = Product.objects.filter(vendor=vendor)
+
+    opening_hour = OpeningHour.objects.filter(vendor=vendor).order_by('day', '-from_hour')
+
+    #get current day opening hour
+    today_date=date.today()
+    today= today_date.isoweekday()
+    
+    current_opening_hours = OpeningHour.objects.filter(vendor=vendor, day=today)
+   
+    # now = datetime.now()
+    # current_time = now.strftime('%H:%M:%S')  
+
+    # is_open=None
+    # for hour in current_opening_hours:
+
+    #     start = str(datetime.strptime(hour.from_hour, '%I:%M %p').time())
+    #     end = str(datetime.strptime(hour.to_hour, '%I:%M %p').time())
+        
+        
+    #     if current_time > start and current_time < end:
+    #         is_open = True
+    #         break
+    #     else:
+    #         is_open=False    
     
     if request.user.is_authenticated:
         cart_items=Cart.objects.filter(user=request.user)
     else:
         cart_items=None
     context={
+        'vendor':vendor,
         'products': product,
-        'cart_items':cart_items
+        'cart_items':cart_items,
+        'opening_hour':opening_hour,
+        'current_opening_hours' : current_opening_hours        
         }
     return render(request, 'dine/vendor_details.html', context)
 # 'vendors': [vendor],
@@ -96,7 +125,7 @@ def decrease_cart(request, product_id):
     
     
   
-@login_required(login_url='signin') 
+@login_required(login_url='/accounts/signin/') 
 def cart(request):
     cart_items = Cart.objects.filter(user=request.user).order_by('created_at')
     context={
@@ -129,17 +158,17 @@ def checkout(request):
     cart_count = cart_items.count()
     if cart_count<=0:
         return redirect ('hotel_list')
-    vendor_profile = VendorProfile.objects.get(user=request.user)
+    user_profile = UserProfile.objects.get(user=request.user)
     default_values={
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'phone': request.user.phone_number,
         'email': request.user.email,
-        'address': vendor_profile.address,
-        'country': vendor_profile.country,
-        'state': vendor_profile.state,
-        'city': vendor_profile.city,
-        'pin_code': vendor_profile.pin_code,
+        'address': user_profile.address,
+        'country': user_profile.country,
+        'state': user_profile.state,
+        'city': user_profile.city,
+        'pin_code': user_profile.pin_code,
         
     }
     form = OrderForm(initial=default_values)

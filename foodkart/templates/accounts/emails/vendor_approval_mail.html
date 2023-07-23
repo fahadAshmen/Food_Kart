@@ -1,0 +1,17 @@
+{% autoescape off %} 
+   
+
+    Hai Mr.{{vendor.first_name}} Your ......{{orig.vendor_name}} 
+    
+    {% if is_approved %}
+
+    Congratulations! Your restaurant has been approved by  Foody Admin
+    {% else %}
+    We are sorry! Your restaurant has not been approved to be listed on Foody. Please contact our team for any queries
+
+    {% endif %}
+
+        
+    Thank You. 
+
+{% endautoescape %}

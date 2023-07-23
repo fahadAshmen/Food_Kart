@@ -4,10 +4,53 @@
 
 {% block content %}
 
- <h1>Vendor Details</h1>
+{% comment %} =================== {% endcomment %}
+<!-- Assuming 'vendor_slug' is the slug of the vendor -->
+{% comment %} <a href="{% url 'signin' %}?next={% url 'vendor_details' vendor_slug=vendor.slug %}&vendor_slug={{ vendor.slug }}">Sign In</a> {% endcomment %}
+
+{% comment %} ======================== {% endcomment %}
 
  <section style="background-color: #eee;">
+  
   <div class="container py-5">
+
+    <div class="justify-content-center row mb-3 mt-3">
+      <div class="col-md-12 col-lg-12">
+        <div class="card shadow-0 border rounded-3">
+         <div class="card-body">
+          <div class="row">              
+            <div class="col-md-12 col-lg-12 col-xl-12 mb-4 mb-lg-0">
+              <div class="name-details">
+                <div class="row justify-content-center">
+                  <div class="col-lg-8"><h3><b>{{vendor.vendor_name}}{% if not vendor.is_open %} [Closed] {% endif %}</b></h3></div>
+                  <div class="col-lg-4">
+                     
+                   {% if opening_hour %}
+
+                    <div class="btn-group">
+                      <a  href="#" class="btn btn-outline-success dropdown-toggle" style="border-width: 2px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span>Today :</span>
+                        {% for hour in current_opening_hours %} <span>{% if hour.is_closed %}Closed {% else %} {{hour.from_hour}} - {{hour.to_hour}} {% endif %}</span> 
+                        {% endfor %}
+                      </a>
+                      <div class="dropdown-menu">
+                        {% for hour in opening_hour %}
+                        <a class="dropdown-item" href="#"><span class="opend-day">{{ hour }}</span> <span class="opend-time"><small>:</small>{% if hour.is_closed %} Closed {% else %} {{ hour.from_hour }} - {{ hour.to_hour }} {% endif %}</span></a>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    
+                  {% endif %}  
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+         </div>
+        </div>
+      </div>
+    </div>
+
     {% for product in products %}
     <div class="row justify-content-center mb-3">
       <div class="col-md-12 col-xl-10">
@@ -27,7 +70,7 @@
                       <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
                     </div>
                   </a>
-                </div>
+                </div>                
               </div>
               <div class="col-md-6 col-lg-6 col-xl-6">
                 <h5>{{product.food_title}}</h5>

@@ -1,0 +1,76 @@
+{% extends 'vendor/vendorbase.html' %}
+{% load static %}
+
+
+
+
+
+{% block content %}
+<style>
+    table > tbody > tr > td {
+        border: 1px solid;
+        text-align: center;        
+    }
+    
+
+</style>
+
+
+
+<div class="jumbotron" style="background-color: rgb(255, 255, 255);">
+    <h3>Opening Hour</h3>
+    <hr>
+    
+          <!-- {{hour.vendor}}  {{hour.from_hour}} - {{hour.to_hour}}          -->
+    
+
+    <table class="opening_hours" style="width: 500px; border: 1px solid;">  <!--  !important --> 
+        <tbody>
+            {% for hour in opening_hours %}
+            <tr id="hour-{{hour.id}}">
+                <td style="border: 1px solid;"><b>{{hour}}</b></td>
+                <td>{% if hour.is_closed %}Closed {% else %} {{hour.from_hour}} - {{hour.to_hour}}  {% endif %}</td>
+                <td><a href="#" class="remove_hour" data-url="{% url 'remove_opening_hour' hour.id%}">Remove</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br><br>
+
+    <form id="opening_hours">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-2">
+                {{form.day}}
+            </div>
+            <div class="col-md-2">
+                {{form.from_hour}}
+            </div>
+            <div class="col-md-2">
+                {{form.to_hour}}
+            </div>
+            <div class="col-md-3">
+                {{form.is_closed}}Set as closed
+            </div>
+            <div class="col-md-2">
+                <input type="hidden" value="{% url 'add_opening_hour' %}" id="add_hour_url">
+                <button class="btn btn-success add_hour">Add Hours</button>
+            </div>
+        </div>
+    </form>
+
+    
+
+{% endblock content %}
+
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+{% block script %}
+<!--CUSTOM APP JS-->
+<script src="{% static 'js/custom/appcustom.js' %}"></script>
+{% endblock script %}
+
+</div>
+
+
+

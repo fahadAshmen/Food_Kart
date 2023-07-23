@@ -1,7 +1,7 @@
 from django import forms
 from accounts.models import Account
 from store.validators import validate_image
-from . models import Vendor
+from . models import Vendor, OpeningHour
 
 
 class VendorRegistrationForm(forms.ModelForm):
@@ -60,8 +60,13 @@ class VendorForm(forms.ModelForm):
             self.fields[field].widget.attrs['class'] = 'form-control'
                 
                 
-                     
-    # def __init__(self, *args,**kwargs):
-    #     super(UserProfileForm, self).__init__(*args,**kwargs)
+
+class OpeningHourForm(forms.ModelForm):
+    class Meta:
+        model = OpeningHour
+        fields = ['day','from_hour', 'to_hour', 'is_closed']
+        
+    # def __init__(self, *args,**kwargs):                    
+    #     super(OpeningHourForm, self).__init__(*args, **kwargs)
     #     for field in self.fields:
     #         self.fields[field].widget.attrs['class'] = 'form-control'

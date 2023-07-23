@@ -1,0 +1,73 @@
+{% extends 'customer/customerBase.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+ <main class="dash-content">
+                <div class="container-fluid">                   
+                    <div class="row mb-4">
+
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    Logged in as : <b>{{request.user}}</b>
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="#"><h5 class="card-title">Edit Profile</h5></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    Total Orders
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="#"><h5 class="card-title">{{orders_count}}</h5></a>
+                                </div>
+                            </div>
+                        </div>
+                      
+                    </div>
+                    
+
+                    <div>
+                        <table class="table table-hover table-light">
+                            <thead class="bg-light">
+                              <tr>
+                                <th scope="col">Orders #</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                              <tr>
+                                <td><b><a href="{% url 'order_details' order.order_number %}" class="text-dark">{{order.order_number}}</a></b></td>
+                                <td>{{order.name}}</td>
+                                <td>{{order.phone}}</td>
+                                <td>₹ {{order.total}}</td>
+                                <td>{{order.status}}</td>
+                                <td>{{order.created_at}}</td>
+                                <td><a href="{% url 'order_details' order.order_number %}" class="btn btn-danger btn-sm">Details</a></td>
+                              </tr>         
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                    </div>
+
+                    
+                </div>
+ </main>
+
+
+
+
+{% endblock content %}

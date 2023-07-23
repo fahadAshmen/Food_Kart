@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django . http import HttpResponse, JsonResponse
-from dine.models import Cart
+from dine.models import Cart, Tax
 from dine.context_processor import get_cart_amount
 from . forms import OrderForm
 from . models import Order, Payment, OrderedFood
 import simplejson as json
 from . utils import generate_order_number
 from django.contrib.auth.decorators import login_required
+from store.models import Product
 
 
 # VERIFICATION EMAIL
@@ -20,13 +21,48 @@ from django.core.mail import EmailMessage
 
 # Create your views here.
 
-@login_required(login_url='signin') 
+@login_required(login_url='/accounts/signin/') 
 def place_order(request):
     cart_items = Cart.objects.filter(user=request.user).order_by('created_at')
     cart_count = cart_items.count()
     if cart_count<=0:
         return redirect ('hotel_list')
     
+    vendor_ids=[]
+    for i in cart_items:
+        if i.product.vendor.id not in vendor_ids:
+            vendor_ids.append(i.product.vendor.id)
+    print(vendor_ids)
+
+
+    total=0
+    k={}
+    total_data={}
+    get_tax= Tax.objects.filter(is_active=True)
+    for i in cart_items:
+        product = Product.objects.get(pk=i.product.id, vendor_id__in=vendor_ids)
+        # print(product, product.vendor.id)
+        v_id= product.vendor.id
+        if v_id in k:
+            total = k[v_id]
+            total += (product.price * i.quantity)
+            k[v_id] = total
+        else:
+            total = (product.price * i.quantity)
+            k[v_id] = total
+    
+        #CALCULATE THE TAX DATA
+        tax_dict={}
+        for i in get_tax:
+            tax_type = i.tax_type
+            tax_percentage = i.tax_percentage
+            tax_amount = round((total * tax_percentage)/100, 2)
+            tax_dict.update({tax_type:{str(tax_percentage): str(tax_amount)}})
+        #Construct total data
+        total_data.update({product.vendor.id: {str(total): tax_dict}})
+    print(total_data)
+
+
     total = get_cart_amount(request)['total']
     tax = get_cart_amount(request)['tax']
     grand_total = get_cart_amount(request)['grand_total']
@@ -48,9 +84,11 @@ def place_order(request):
             order.total = grand_total
             order.total_tax = tax
             order.tax_data = json.dumps(tax_data)
+            order.total_data = json.dumps(total_data)
             order.payment_method= request.POST['payment_method']
             order.save()
             order.order_number= generate_order_number(order.id)
+            order.vendors.add(*vendor_ids)
             order.save()
             context = {
                 'order':order,
@@ -64,7 +102,7 @@ def place_order(request):
 
 
     
-@login_required(login_url='signin') 
+@login_required(login_url='/accounts/signin/') 
 def payments(request):
     # CHECK IF THE REQUEST IS AJAX
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'POST':

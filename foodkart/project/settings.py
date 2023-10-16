@@ -40,13 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'foody',    #new
-    'accounts', #new
-    'vendor',   #new
-    'store',    #new
-    'dine',     #new
-    'orders',   #new 
-    'customer', #new
+    'foody',    
+    'accounts', 
+    'vendor',   
+    'store',    
+    'dine',     
+    'orders',  
+    'customer', 
+    'admin_area',
        
     'crispy_forms',
     'crispy_bootstrap5'

@@ -47,8 +47,22 @@ class VendorRegistrationForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Password does not match"
             )
+        
+        if len(password) < 8:
+            raise forms.ValidationError("Password should be at least 8 characters long.")
+
             
-            
+    def clean_phone_number(self):
+        phone_number= self.cleaned_data.get('phone_number')
+        
+        if len(phone_number) != 10:
+            raise forms.ValidationError("Phone number must be valid")
+        
+        if not phone_number.isdigit():
+            raise forms.ValidationError("Phone number must contail only digits")
+
+
+
 class VendorForm(forms.ModelForm):
     class Meta:
         model = Vendor

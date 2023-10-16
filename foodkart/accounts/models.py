@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.validators import MinLengthValidator
 
 
 
@@ -49,7 +50,7 @@ class Account(AbstractBaseUser):
     last_name    =models.CharField(max_length=50,null=True,blank=True)
     username     =models.CharField(max_length=50,unique=True)
     email        =models.EmailField(max_length=100,unique=True)
-    phone_number =models.CharField(max_length=50)
+    phone_number =models.CharField(max_length=50,unique=True,blank=True,null=True,validators=[MinLengthValidator(limit_value=10)],help_text="Enter a unique phone number (minimum 10 digits)")
     role         = models.CharField(choices=ROLE_CHOICES,max_length=10,blank=True,null=True)
     
     date_joined  =models.DateTimeField(auto_now_add=True)
@@ -78,7 +79,7 @@ class Account(AbstractBaseUser):
     
 class UserProfile(models.Model):
     user = models.OneToOneField(Account, on_delete=models.CASCADE,blank=True, null=True)
-    profile_picture=models.ImageField(upload_to='users/profile_picture',blank=True,null=True)
+    profile_picture=models.ImageField(upload_to='users/profile_picture',blank=True,null=True, default='default/default_profile.jpg')
     address=models.CharField(max_length=250,blank=True,null=True)
     country=models.CharField(max_length=15,blank=True,null=True)
     state=models.CharField(max_length=10,blank=True,null=True)

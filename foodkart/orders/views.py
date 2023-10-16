@@ -8,18 +8,16 @@ import simplejson as json
 from . utils import generate_order_number
 from django.contrib.auth.decorators import login_required
 from store.models import Product
+from foody.models import AdminWallet, Charges
 
 
 # VERIFICATION EMAIL
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-# from django.utils.encoding import force_bytes
-# from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 
 
-# Create your views here.
+
 
 @login_required(login_url='/accounts/signin/') 
 def place_order(request):
@@ -32,13 +30,15 @@ def place_order(request):
     for i in cart_items:
         if i.product.vendor.id not in vendor_ids:
             vendor_ids.append(i.product.vendor.id)
-    print(vendor_ids)
+    
 
 
     total=0
-    k={}
+    k={}    
     total_data={}
+    charge_data={}
     get_tax= Tax.objects.filter(is_active=True)
+    charges=Charges.objects.filter(is_active=True)
     for i in cart_items:
         product = Product.objects.get(pk=i.product.id, vendor_id__in=vendor_ids)
         # print(product, product.vendor.id)
@@ -50,7 +50,7 @@ def place_order(request):
         else:
             total = (product.price * i.quantity)
             k[v_id] = total
-    
+        #{12:500}
         #CALCULATE THE TAX DATA
         tax_dict={}
         for i in get_tax:
@@ -58,9 +58,21 @@ def place_order(request):
             tax_percentage = i.tax_percentage
             tax_amount = round((total * tax_percentage)/100, 2)
             tax_dict.update({tax_type:{str(tax_percentage): str(tax_amount)}})
+
+        charge_dict={}
+        for i in charges:
+            charge_type=i.charge_type            
+            charge_percentage=i.charge_percentage
+            charged_amount=round((total*charge_percentage)/100, 2)
+            charge_dict.update({charge_type:{str(charge_percentage): str(charged_amount)}})
+        
         #Construct total data
         total_data.update({product.vendor.id: {str(total): tax_dict}})
-    print(total_data)
+        charge_data.update({product.vendor.id: charge_dict})
+        
+
+        # comm = Commission.objects.filter(is_active=True)
+
 
 
     total = get_cart_amount(request)['total']
@@ -84,12 +96,13 @@ def place_order(request):
             order.total = grand_total
             order.total_tax = tax
             order.tax_data = json.dumps(tax_data)
+            order.charge_data=json.dumps(charge_data)            
             order.total_data = json.dumps(total_data)
             order.payment_method= request.POST['payment_method']
             order.save()
             order.order_number= generate_order_number(order.id)
             order.vendors.add(*vendor_ids)
-            order.save()
+            order.save()            
             context = {
                 'order':order,
                 'cart_items':cart_items,
@@ -118,6 +131,15 @@ def payments(request):
         order.order_number = order_number
         order.save()
 
+        #CALCULATION FOR TOTAL COMMISION IN ADMIN WALLET
+        # commission_data=json.loads(order.charge_data)
+        # total_commission=0
+        # for keys,values in commission_data.items():
+        #     for key,val in values.items():
+        #         for amount in val.values():
+        #             total_commission += float(amount)
+        
+
         payment = Payment(
             user=request.user,
             transaction_id=transaction_id,
@@ -132,7 +154,7 @@ def payments(request):
         order.is_ordered = True
         order.save()
         
-    
+        
         # MOVE CART ITEMS TO THE ORDERED FOOD MODEL
 
         cart_items= Cart.objects.filter(user=request.user)
@@ -147,6 +169,20 @@ def payments(request):
             ordered_food.amount = item.product.price * item.quantity
             ordered_food.save()
             # return HttpResponse('Mail sent')
+
+        #ADMIN WALLET
+        #CALCULATION FOR TOTAL COMMISION IN ADMIN WALLET
+        commission_data=json.loads(order.charge_data)
+        total_commission=0
+        for keys,values in commission_data.items():
+            for key,val in values.items():
+                for amount in val.values():
+                    total_commission += float(amount)
+
+        admin_wallet = AdminWallet(transaction=payment,trans_amount=order.total,order=order)  
+        admin_wallet.admin_commision = total_commission
+        admin_wallet.save()
+        
         
         # SENT ORDER CONFIRAMTION EMAIL TO THE CUSTOMER
         current_site= get_current_site(request)
@@ -211,7 +247,8 @@ def order_complete(request):
     except:
         return redirect('home_page')
 
-    
+
+
 
 
         

@@ -60,47 +60,7 @@ def vprofile(request):
     }
     return render(request, 'vendor/vprofile.html',context)
 
-    
-# def vprofile(request):
-#     user = request.user
-#     vendor_profile_details = get_object_or_404(VendorProfile, user=user)
-#     vendor_details = get_object_or_404(Vendor, vendor=user)
-#     if request.method=='POST':
-#         vendor_data = VendorForm(request.POST,instance=vendor_details)
-#         user_reg = UserForm(request.POST,instance=user)
-#         vendor_profile = VendorProfileForm(request.POST,request.FILES,instance=vendor_profile_details)
-#         if vendor_data.is_valid() and user_reg.is_valid() and vendor_profile.is_valid():
-#             vendor = vendor_data.save(commit=False)  # Create vendor object without saving
-#             vendor.vendor = request.user  # Assign the vendor field
-#             vendor.save()  # Save the vendor object  
-               
-#             user_reg.save()
-#             vendor_profile.save()
-#             messages.success(request,'Your Profile has been updated')
-#             return redirect('vprofile')
-#         else:
-#             vendor_errors = vendor_profile.errors.as_data()
-#             user_reg_errors = user_reg.errors.as_data()
-#             user_profile_errors = user_profile.errors.as_data()
-#             errors = []
-#             errors.extend(vendor_errors)
-#             errors.extend(user_reg_errors)
-#             errors.extend(user_profile_errors)
-#             for error in errors:
-#                 messages.error(request, error)
-#             return redirect('vprofile')
-#     else:
-#         vendor_data = VendorForm(instance=vendor_details)
-#         user_reg = UserForm(instance=user)
-#         vendor_profile = VendorProfileForm(instance=vendor_profile_details)
-#     context = {
-#         'vendor_data':vendor_data,
-#         'user_reg': user_reg,
-#         'vendor_profile':vendor_profile,
-#         'vendor_details':vendor_profile_details
-#     }
-#     return render(request, 'vendor/vprofile.html',context)
-
+   
 
 
 def addProduct(request, id=0):
@@ -174,7 +134,6 @@ def remove_opening_hour(request, pk=None):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             hour=get_object_or_404(OpeningHour, pk=pk)
-            print('==>',hour)
             hour.delete()
             return JsonResponse({'status':'success', 'id': pk})
         
@@ -187,12 +146,21 @@ def order_details(request, order_number):
             'ordered_food' : ordered_food,
             'total' : orders.get_total_by_vendor()['total'],
             'tax_data' : orders.get_total_by_vendor()['tax_dict'],
-            'grand_total' : orders.get_total_by_vendor()['grand_total'],         
+            'grand_total' : orders.get_total_by_vendor()['grand_total'],
+            'service_charges':orders.get_total_by_vendor()['service_charges'],         
          }
         return render (request, 'vendor/order_details.html', context)
     except:
         return redirect('vendorDashboard')
 
+def vendor_orders(request):
+    vendor = get_vendor(request)
+    order = Order.objects.filter(vendors__in=[vendor.id],is_ordered=True).order_by('-created_at')
+
+    context={
+        'orders':order,
+    }
+    return render(request,'vendor/vendor_orders.html',context)
 
           
         

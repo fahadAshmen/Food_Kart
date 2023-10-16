@@ -1,0 +1,93 @@
+{% extends 'admin_area/admin_areaBase.html'%}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid"> 
+    {% include 'includes/alert.html' %}                  
+    <div class="row mb-4">
+
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-header text-center">
+                     <b>Total Orders</b>
+                </div>
+                <div class="card-body text-center">
+                    <a href="#"><h5 class="card-title">{{order_count}}</h5></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-header text-center">
+                     <b>Total Revenue</b>
+                </div>
+                <div class="card-body text-center">
+                    <a href="#"><h5 class="card-title">₹ {{total_trans}}</h5></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-header text-center">
+                     <b>Total Commission</b>
+                </div>
+                <div class="card-body text-center">
+                    <a href="#"><h5 class="card-title">₹ {{total_comm}}</h5></a>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+    
+
+    <!-- TABLE STARTS-->
+    <div>
+        <table class="table table-hover table-light">
+            <thead class="bg-light">
+              <tr>
+                <th scope="col">Transaction</th>
+                <th scope="col">Total Amount</th>
+                <th scope="col">Admin Commission</th>
+                <th scope="col">Created At</th>
+                {% comment %} <th scope="col">Status</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th> {% endcomment %}
+                <th>Vendors</th>
+                <th>ID</th>
+                <th>Payment Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for wallet in wallets %}
+              <tr>
+                <td><b><a href="#" class="text-dark">{{wallet.transaction}}</a></b></td>
+                <td>{{wallet.trans_amount}}</td>                              
+                {% comment %} <td>₹ {{wallet.order}}</td>  {% endcomment %}
+                {% if wallet.admin_commision %}
+                <td>{{wallet.admin_commision}}</td>
+                {% endif %}
+                <td>{{wallet.created_at}}</td>
+                <td><p>{{wallet.order.display_vendor}}</p></td>
+                <td>{{wallet.id}}</td>
+                
+                <td>{% if wallet.payment_status %}
+                        <p style="color: green;"><b>Paid</b></p>
+                    {% else %}
+                        <p style="color: red;"><b>Pending</b></p>
+                    {% endif %}
+                </td>
+                
+                <td><a href="{% url 'make_payment' wallet.id %}" class="btn btn-success btn-sm">Make Payment</a></td>
+              </tr>         
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>
+
+
+</div>
+{% endblock content %}

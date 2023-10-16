@@ -9,10 +9,8 @@ import simplejson as json
 
 @login_required(login_url='/accounts/signin/')
 def custProfile(request):
-    user=request.user
-    print(user)
-    user_profile_details = get_object_or_404(UserProfile, user=user)
-    print('==>',user_profile_details)
+    user=request.user    
+    user_profile_details = get_object_or_404(UserProfile, user=user)    
     if request.method == 'POST':
         user_reg= UserForm(request.POST,instance=user)
         user_profile = UserProfileForm(request.POST, request.FILES,instance=user_profile_details)

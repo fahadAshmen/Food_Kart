@@ -1,0 +1,39 @@
+{% extends 'admin_area/admin_areaBase.html'%}
+{% load static %}
+
+{% block content %}
+    <h4><b>{{vendor_count}} vendors found</b></h4>
+    <div class="container-fluid">
+        {% include 'includes/alert.html' %}
+        <div>
+            <table class="table table-hover table-light">
+                <thead class="bg-light">
+                  <tr>
+                    <th scope="col">Vendor Name</th>
+                    <th scope="col">Vendor</th>
+                    <th scope="col">Status</th>
+                    <th></th>                   
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for vendor in vendors %}
+                  <tr>
+                    <td>{{vendor.vendor_name}}</td>
+                    <td>{{vendor.vendor}}</td>                              
+                    <td>{% if vendor.is_approved %} 
+                           <p style="color: rgb(7, 143, 7);"><b> Approved</b></p> 
+                        {% else %}
+                            <p style="color:rgb(218, 30, 30);"><b>Approval Pending</b></p>                       
+                        {% endif %}
+                    </td> 
+                    <td><a href="{% url 'block_vendor' vendor.id %}" class="btn btn-success btn-sm">Change Status</a></td>
+
+                  </tr>         
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+
+{% endblock content %}
+

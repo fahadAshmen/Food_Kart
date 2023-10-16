@@ -45,7 +45,7 @@
                 <a href="#!" class="menu-toggle">
                     <i class="fas fa-bars"></i>
                 </a>
-                <a href="index.html" class="spur-logo"><i class="fas fa-bolt"></i> <span>Foody</span></a>
+                <a href="#" class="spur-logo"><i class="fas fa-bolt"></i> <span>Foody</span></a>
             </header>
             <nav class="dash-nav-list">
                 <div><a href="{% url 'vendorDashboard' %}" class="dash-nav-item">
@@ -70,7 +70,7 @@
                     <i class="fas fa-clock"></i> Opening Hours </a>
                 </div>
 
-                <div><a href="#" class="dash-nav-item">
+                <div><a href="{% url 'vendor_orders' %}" class="dash-nav-item">
                     <i class="fa-solid fa-folder-open"></i> My Orders </a>
                 </div>
 
@@ -86,7 +86,7 @@
                         </div>
                 </div> {% endcomment %}
 
-                <div class="dash-nav-dropdown ">
+                {% comment %} <div class="dash-nav-dropdown ">
                     <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
                         <i class="fas fa-cube"></i> Components </a>
                     <div class="dash-nav-dropdown-menu">
@@ -97,7 +97,7 @@
                         <a href="typography.html" class="dash-nav-dropdown-item">Typography</a>
                         <a href="userinterface.html" class="dash-nav-dropdown-item">User Interface</a>
                     </div>
-                </div>
+                </div> {% endcomment %}
                 {% comment %} <div class="dash-nav-dropdown">
                     <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
                         <i class="fas fa-file"></i> My Profile </a>
@@ -107,13 +107,7 @@
                         
                     </div>
                 </div> {% endcomment %}
-                    <div class="dash-nav-dropdown">
-                        <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle"><i class="fas fa-info"></i> About </a>
-                        <div class="dash-nav-dropdown-menu">
-                            <a href="#" target="_blank" class="dash-nav-dropdown-item">Hotel Info</a>
-                            <a href="#" target="_blank" class="dash-nav-dropdown-item">Contact Us</a>
-                        </div>
-                    </div>
+                    
             </nav>
         </div>
         <div class="dash-app">
@@ -138,10 +132,7 @@
                     </a>
                     {% endif %}
                     
-                    <a href="#!" class="tools-item">
-                        <i class="fas fa-bell"></i>
-                        <i class="tools-item-count">4</i>
-                    </a>
+                   
                     <div class="dropdown tools-item">
                         <a href="#" class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-user"></i>

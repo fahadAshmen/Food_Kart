@@ -7,18 +7,17 @@ from datetime import time, datetime, date
 # Create your models here.
 class Vendor(models.Model):
     vendor     =models.OneToOneField(Account, on_delete=models.CASCADE)
-    # user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     vendor_name= models.CharField(max_length=100)
-    is_vendor  =models.BooleanField(default=False)
+    # is_vendor  =models.BooleanField(default=False)
     vendor_slug = models.SlugField(max_length=100, unique=True)
-    v_profile_pic = models.ImageField(upload_to='vendors/profile_picture',blank=True,null=True)
+    # v_profile_pic = models.ImageField(upload_to='vendors/profile_picture',blank=True,null=True)
     is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return self.vendor_name
     
     
-    
+    #@property
     def is_open(self):
         today_date=date.today()
         today= today_date.isoweekday()
@@ -27,11 +26,11 @@ class Vendor(models.Model):
         now = datetime.now()
         current_time = now.strftime('%H:%M:%S')
 
+        
         is_open=None
         for hour in current_opening_hours:
             start = str(datetime.strptime(hour.from_hour, '%I:%M %p').time())
             end = str(datetime.strptime(hour.to_hour, '%I:%M %p').time())
-
             if current_time > start and current_time < end:
                 is_open = True
                 break
@@ -62,6 +61,14 @@ class Vendor(models.Model):
                     
         return super(Vendor, self).save(*args, **kwargs)
     
+class VendorWallet(models.Model):
+    vendor = models.OneToOneField(Vendor, on_delete=models.CASCADE, related_name='wallet_obj', blank=True, null=True)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
+     
+    def __str__(self):
+       return str(self.vendor)
+
+    
 DAYS=[
     (1, ("Monday")),
     (2, ("Tuesday")),
@@ -73,6 +80,7 @@ DAYS=[
 ]
 
 HOUR_OF_DAY = [(time(h,m).strftime('%I:%M %p'), time(h,m).strftime('%I:%M %p')) for h in range(0,24) for m in (0,30)]
+
 
 class OpeningHour(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)

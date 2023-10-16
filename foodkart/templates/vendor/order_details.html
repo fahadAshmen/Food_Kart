@@ -65,14 +65,27 @@
                                     </span>
                                 </li>
                                 {% endfor %}      
-                                {% endfor %}                    
-                                
+                                {% endfor %}
+
+                                 {% for key, values in service_charges.items %}
+                                {% for x,y in values.items %}
+                                <li style="list-style-type: none;">
+                                    {{key}} <small>({{ x }}%)</small>
+                                    <span class="price float-right">
+                                        <span class="currency">₹</span>
+                                        <span>{{ y }}</span>
+                                    </span>
+                                </li>
+                                {% endfor %}
+                                {% endfor %}                     
+                                <hr>
                                 <li style="list-style-type: none; font-weight: 600;">Grand Total
                                     <span class="price float-right">
                                         <span class="currency">₹</span>
                                         <span id="grand-total"> {{ grand_total }}</span>
                                     </span>
                                 </li>
+                                <hr>
                             </ul>
                         </div>                                              
                     </div>                    

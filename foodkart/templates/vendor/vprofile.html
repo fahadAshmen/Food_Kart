@@ -1,86 +1,5 @@
 {% extends 'vendor/vendorbase.html' %}
 {% load static %}
-{% comment %} {% extends 'vendor/vendorbase.html' %}
-{% load static %}
-
-
-
-{% block content %}
-<div class="jumbotron" style="background-color: beige;">
-   <h1>DEMO PROFILE </h1>
-   {% include 'includes/alert.html' %}  
-    
- 
-
-    <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label >First Name</label>
-              {{user_reg.first_name}}
-            </div>
-            <div class="form-group col-md-6">
-                <label >Last Name</label>
-                {{user_reg.last_name}}
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label >Phone Number</label>
-                {{user_reg.phone_number}}
-            </div>
-            <div class="form-group col-md-6">
-                <label >Vendor Name</label>
-              {{vendor_profile.vendor_name}}
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label >Profile Picture</label>
-              {{user_profile.profile_picture}}
-            </div>
-           <div style="width: 150px; height: 150px; border: 1px solid;">
-            <img src="{{up.profile_picture.url}}" width="150px" height="150px" alt="Profile Picture">
-           </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group col-lg-12">
-                <label >Address</label>
-              {{user_profile.address}}
-            </div>            
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label >Country</label>
-                {{user_profile.country}}
-            </div>
-            <div class="form-group col-md-6">
-                <label >State</label>
-                {{user_profile.state}}
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label >City</label>
-                {{user_profile.city}}
-            </div>
-            <div class="form-group col-md-6">
-                <label >Pincode</label>
-                {{user_profile.pin_code}}
-            </div>
-        </div>
-
-        <input type="submit" value="Save" class="btn btn-success">
-    </form>      
-    {% endblock content %} 
-</div> {% endcomment %}
-
-
-{% comment %} xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx {% endcomment %}
-
-
-
 
 
 {% block content %}
@@ -114,9 +33,11 @@
             <div class="form-group col-md-6">
                 <label for="{{vendor_profile.profile_picture.id_for_label}}">Profile Picture</label>
                 {{vendor_profile.profile_picture}}
+                
             </div>
             <div style="width: 150px; height: 150px; border: 1px solid;">
-                <img src="{{vendor_profile.profile_picture.url}}" width="150px" height="150px" alt="Profile Picture">
+                {% comment %} <img src="{{vendor_profile.profile_picture.url}}" width="150px" height="150px" alt="Profile Picture"> {% endcomment %}
+                <img src="{{vendor_details.profile_picture.url}}" width="150px" height="150px" alt="Profile Picture">
             </div>
         </div>
 

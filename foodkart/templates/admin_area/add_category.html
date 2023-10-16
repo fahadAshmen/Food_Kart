@@ -1,0 +1,13 @@
+{% extends 'admin_area/admin_areaBase.html'%}
+{% load static %}
+
+{% block content %}
+
+{{form.errors}}
+
+<form action="" method="post">
+    {% csrf_token %}
+{{form.as_p}}
+<input type="submit" class="btn btn-success" value="Save">
+</form>
+{% endblock content %}

@@ -4,8 +4,8 @@
 {% block content%}
 
 <!-- slider Area Start -->
-<div class="slider-area ">
-    <!-- Mobile Menu -->
+
+<div class="slider-area ">    
     <div class="slider-active">
         <div class="single-slider slider-height" data-background="{% static 'img/hero/yellow_img_food.jpg'%}">
             <div class="container">
@@ -21,7 +21,7 @@
                             <p data-animation="fadeInRight" data-delay=".8s">Your Plate!</p>
                             <!-- Hero-btn -->
                             <div class="hero__btn" data-animation="fadeInRight" data-delay="1s">
-                                <a href="industries.html" class="btn hero-btn">Order Now</a>
+                                <a href="{% url 'hotel_list' %}" class="btn hero-btn">Order Now</a>
                             </div>
                         </div>
                     </div>
@@ -33,19 +33,12 @@
 <!-- slider Area End-->
 
 <!-- Nav Card -->
+{% comment %} <br>
 <br>
-<br>
-
-{% comment %} <div class="tab-content" id="nav-tabContent">   
-    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-      
 
 
-     
-    </div>
-</div> {% endcomment %}
 
-<div class="tab-content" id="nav-tabContent">
+ <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
       <h2 class="pl-3">Top Restaurants in town</h2>
       <div class="container-fluid">
@@ -65,14 +58,13 @@
                   <a href="#" class="btn btn-outline-danger mt-2 wishlist-btn mb-2 mr-3" onclick="addToWishlist(this)">
                     <i class="fas fa-heart"></i>
                   </a>
-                 {% comment %} modal {% endcomment %}
-                  <!-- Default dropright button -->
+              
                 <div class="btn-group dropright">
                     <a href="#" class="btn btn-warning dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa-solid fa-square-chevron-right fa-beat" style="color: #e67b60;"></i>
                     </a>
                     <div class="dropdown-menu">
-                    <!-- Dropdown menu links -->
+                    
                     
                     <ul><h1> Menu</h1>
                         <li>Looks</li>
@@ -95,5 +87,5 @@
   </div>
   
 
-<br>
+<br> {% endcomment %}
 {% endblock content %}

@@ -4,12 +4,11 @@ from django.contrib.auth import login, authenticate, logout
 from . forms import RegistrationForm
 from . models import Account, UserProfile, VendorProfile
 from django.contrib import messages, auth
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . utils import check_role_customer, check_role_vendor
 # from django.http import HttpResponseRedirect
 
-from vendor.models import Vendor
+from vendor.models import Vendor, VendorWallet
 from vendor.forms import VendorRegistrationForm
 from django.template.defaultfilters import slugify
 
@@ -84,8 +83,10 @@ def signin(request):
                 return redirect('vendorDashboard')
             elif user.role =='CUSTOMER':
                 return redirect('custDashboard')
-            elif user.role == None and request.user.is_superadmin:
-                return redirect('/admin/')
+            elif user.role == None and request.user.is_admin:
+               return redirect('/admin_area/')
+            # elif user.role == None and request.user.is_superadmin:
+            #     return redirect('/admin/')
         else:
             messages.error(request, 'Invalid login credentials')
             return redirect('signin')
@@ -130,6 +131,23 @@ def signout(request):
     messages.success(request,"You are logged out")
     return redirect('signin')
     #HttpResponseRedirect
+
+
+def dashboard(request):
+     user=request.user
+     if user.is_authenticated:
+        if user.role == 'VENDOR' and user.vendor.is_approved:
+            return redirect('vendorDashboard')
+        elif user.role =='CUSTOMER':
+            return redirect('custDashboard')
+        elif user.role == None and request.user.is_admin:
+               return redirect('/admin_area/')
+                
+     else:
+          return redirect('home')
+
+
+
 
 #USER ACTIVATION LINK
 def activate(request, uidb64, token):
@@ -228,9 +246,8 @@ def register_vendor(request):
             user.role= 'VENDOR'
             user.phone_number=phone_number
             user.save()
-            UserProfile.objects.create(user=user)
-            # VendorProfile.objects.create(user=user)
-            print(user.pk)
+            UserProfile.objects.create(user=user)            
+            
             #USER ACTIVATION
             current_site= get_current_site(request)
             mail_subject = "Please activate your account"
@@ -246,27 +263,12 @@ def register_vendor(request):
             #VENDOR ACTIVATION
             vendor_name=form.cleaned_data['vendor_name']
             vendor = Vendor.objects.create(vendor=user,
-                vendor_name=form.cleaned_data['vendor_name'],
-                is_vendor=False)
+                vendor_name=form.cleaned_data['vendor_name'])
+                # is_vendor=False)
             vendor.vendor_slug = slugify(vendor_name)+'-'+str(user.id)
-            vendor.save()            
-            # print(vendor.pk)
-            # superuser = Account.objects.get(is_admin=True)
-            # print(superuser)
-            # super_email = superuser.email
-            # print(super_email)
-            # current_site= get_current_site(request)
-            # mail_subject = "Request for vendor application"
-            # message = render_to_string('accounts/vendor_verification.html',{
-            #     'vendor': vendor,
-            #     'domain': current_site,
-            #     'vid': urlsafe_base64_encode(force_bytes(vendor.pk)),
-            #     'token': default_token_generator.make_token(user)
-            # })
+            vendor.save()
+            VendorWallet.objects.create(vendor=vendor)            
             
-
-            # send_email = EmailMessage(mail_subject, message, to=[super_email])
-            # send_email.send()
             return redirect('signin')
 
     else:
@@ -277,54 +279,35 @@ def register_vendor(request):
    
     return render(request,'accounts/vendor_register.html', context)
 
-
-#VENDOR REQUEST VALIDATION
-# def vendor_activate(request, vidb64, token):
-#     try:
-#         vid = urlsafe_base64_decode(vidb64).decode()
-#         # vendor = Customer._default_manager.get(pk=vid)
-#         vendor=Vendor.objects.get(pk=vid)
-#         user=vendor.vendor
-
-#     except(TypeError, ValueError,OverflowError, Vendor.DoesNotExist):
-#         vendor = None
-
-#     if vendor is not None and default_token_generator.check_token(user, token):
-#             user.is_vendor = True
-#             user.save()
-#             vendor.is_vendor = True
-#             vendor.save()
-
-#             messages.success(request,"Congratulations!, Your account is activated")
-#             return redirect("signin")
-#     else:
-#             messages.error(request,"Invalid activation link")
-#             return redirect("vendor_register")
-        
+      
 #VENDOR DASHBOARD
 @login_required(login_url='/accounts/signin/')
 @user_passes_test(check_role_vendor)
 def vendorDashboard(request): 
     
-    vendors = Vendor.objects.filter(vendor=request.user)
-    for vendor in vendors:
+    vendors = Vendor.objects.get(vendor=request.user)
+    vendor_wallet= VendorWallet.objects.get(vendor=vendors)
+    for vendor in [vendors]:
         pass
     orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).order_by('-created_at')
     recent_orders = orders[:5]
 
-    # monthly_revenue
+    #monthly_revenue
     current_month = datetime.datetime.now().month
     current_month_orders =orders.filter(vendors__in=[vendor.id], created_at__month=current_month)
     current_month_revenue=0
     for i in current_month_orders:
          if i.get_total_by_vendor():
               current_month_revenue += i.get_total_by_vendor()['grand_total']    
-
+    
     #total_revenue
     total_revenue=0
     for i in orders:
          if i.get_total_by_vendor():
               total_revenue += i.get_total_by_vendor()['grand_total']
+    
+
+
     
     context = {
          'orders' : orders,
@@ -332,6 +315,7 @@ def vendorDashboard(request):
          'recent_orders' : recent_orders,
          'total_revenue' : total_revenue,
          'current_month_revenue' : current_month_revenue,
+         'vendor_wallet':vendor_wallet,
     }
 
     return render(request, 'vendor/vendorDashboard.html', context)
@@ -350,5 +334,7 @@ def custDashboard(request):
         'recent_orders' : recent_orders
     }
     return render(request, 'customer/custDashboard.html', context)
+
+
 
 

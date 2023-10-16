@@ -1,0 +1,42 @@
+{% extends 'admin_area/admin_areaBase.html'%}
+{% load static %}
+
+{% block content %}
+    <h4><b>{{user_count}} Users</b></h4>
+    
+    <div class="container-fluid">
+        {% include 'includes/alert.html' %}
+        <div>
+            <table class="table table-hover table-light">
+                <thead class="bg-light">
+                  <tr>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Status</th>                    
+                    <th></th>                   
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                  <tr>
+                    <td><strong>{{user.first_name}}</strong></td>
+                    <td><strong>{{user.last_name}}</strong></td> 
+                    <td>{{user.email}}</td>
+                    <td><strong>{{user.role}}</strong></td>                              
+                    <td>{% if user.is_active %} 
+                           <p style="color: rgb(7, 143, 7);"><b> Active</b></p> 
+                        {% else %}
+                            <p style="color:rgb(218, 30, 30);"><b>Not Active</b></p>                       
+                        {% endif %}
+                    </td>                    
+                    <td><a href="{% url 'block_user' user.id %}" class="btn btn-success btn-sm">Change Status</a></td>
+
+                  </tr>         
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+{% endblock content %}

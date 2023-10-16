@@ -8,6 +8,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from orders.forms import OrderForm
 from accounts.models import UserProfile
+from django.db.models import Count
+
 
 from datetime import date, datetime
 
@@ -15,11 +17,11 @@ from datetime import date, datetime
 
 # Create your views here.
 
-def hotel_list(request):
-    # vendor_profile = VendorProfile.objects.filter()
-    vendor = Vendor.objects.filter(is_approved=True, vendor__is_active=True)
+def hotel_list(request):    
+    vendor = Vendor.objects.annotate(product_count=Count("product")).filter(is_approved=True, vendor__is_active=True,product_count__gt=0) #.values("vendor_name","product_count")
+    # vendor = Vendor.objects.filter(is_approved=True, vendor__is_active=True)
     vendors_count = vendor.count()
-    print(vendor)
+    print(vendors_count)    
     context = {
         'vendors': vendor,
         'vendors_count':vendors_count
@@ -29,10 +31,10 @@ def hotel_list(request):
 
 #VENDOR MENU DETAILS
 def vendor_details(request, vendor_slug):
-    vendor=get_object_or_404(Vendor, vendor_slug=vendor_slug)
-    
+    # vendor = Vendor.objects.annotate(product_count=Count("product")).filter(is_approved=True, vendor__is_active=True,product_count__gt=0).values("vendor_name","product_count")
+    vendor=get_object_or_404(Vendor, vendor_slug=vendor_slug)    
     product = Product.objects.filter(vendor=vendor)
-
+    print(product)
     opening_hour = OpeningHour.objects.filter(vendor=vendor).order_by('day', '-from_hour')
 
     #get current day opening hour
@@ -41,22 +43,6 @@ def vendor_details(request, vendor_slug):
     
     current_opening_hours = OpeningHour.objects.filter(vendor=vendor, day=today)
    
-    # now = datetime.now()
-    # current_time = now.strftime('%H:%M:%S')  
-
-    # is_open=None
-    # for hour in current_opening_hours:
-
-    #     start = str(datetime.strptime(hour.from_hour, '%I:%M %p').time())
-    #     end = str(datetime.strptime(hour.to_hour, '%I:%M %p').time())
-        
-        
-    #     if current_time > start and current_time < end:
-    #         is_open = True
-    #         break
-    #     else:
-    #         is_open=False    
-    
     if request.user.is_authenticated:
         cart_items=Cart.objects.filter(user=request.user)
     else:
@@ -128,6 +114,7 @@ def decrease_cart(request, product_id):
 @login_required(login_url='/accounts/signin/') 
 def cart(request):
     cart_items = Cart.objects.filter(user=request.user).order_by('created_at')
+    # closed_cart_items_ids=Cart.objects.filter(user=request.user,product__vendor_is_open=True)
     context={
         'cart_items':cart_items
     }

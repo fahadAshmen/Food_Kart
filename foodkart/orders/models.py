@@ -47,6 +47,7 @@ class Order(models.Model):
     total=models.FloatField()
     tax_data=models.JSONField(blank=True, help_text = "Data format:{'tax_type':{'tax_percentage':'tax_amount'}}", null=True)
     total_data = models.JSONField(blank=True, null=True)
+    charge_data=models.JSONField(blank=True, null=True)
     total_tax = models.FloatField()
     payment_method = models.CharField(max_length=25)
     status=models.CharField(choices=STATUS, max_length=15, default='New')
@@ -61,68 +62,50 @@ class Order(models.Model):
     def display_vendor(self):
         return ", ".join([str(i) for i in self.vendors.all()])
     
-        
-    # def get_total_by_vendor(self):
-    #     vendor = Vendor.objects.get(vendor=request_object.user)
-    #     if self.total_data:
-    #         total_data = json.loads(self.total_data)
-    #         data=total_data.get(str(vendor.id))
-            
-
-    #         total=0
-    #         tax =0
-    #         tax_dict={}
-    #         grand_total=0
-    #         for key, val in data.items():
-    #             total += float(key)          
-    #             tax_dict.update(val)
-
-
-    #             #calculate tax
-    #             # {'CGST': {'9.00' : '5.00'}, 'SGST': {'9.00' : '5.00'}}
-    #             for i in tax_dict:
-    #                 for j in tax_dict[i]:
-    #                     tax += float(tax_dict[i][j])
-    #         grand_total = float(total) + float(tax)
-    #     print('total :', total)
-    #     print('tax :', tax)
-    #     print('tax_dc :', tax_dict)
-    #     print('GRANDtotal :', grand_total)
-    #     return vendor
     
 
 
     def get_total_by_vendor(self):
         vendor = Vendor.objects.get(vendor=request_object.user)
-        if self.total_data:
+        if self.total_data and self.charge_data:            
             total_data = json.loads(self.total_data)
             data = total_data.get(str(vendor.id))
-
+            charge_data= json.loads(str(self.charge_data))           
+            service_charges=charge_data.get(str(vendor.id))
+            
+            
             total = 0
             tax = 0
+            service_charge=0
             tax_dict = {}
             grand_total = 0
             for key, val in data.items():
                 total +=float(key)
                 tax_dict.update(val)
 
+                for key,values in service_charges.items():
+                    for i in values:
+                        service_charge += float(service_charges[key][i])
+
+                
                 # calculate tax
                 # {'CGST': {'9.00' : '5.00'}, 'SGST': {'9.00' : '5.00'}}
+                # {'CGST': {'9.00': '19.80'}, 'SGST': {'9.00': '19.80'}, 'Service Charge': {'10.00': '22.00'}}
                 for i in tax_dict:
                     for j in tax_dict[i]:
                         tax += float(tax_dict[i][j])
 
-            grand_total = float(total) + float(tax)
-
-            # print('TOTAL', total)
-            # print('TAX', tax)
-            # print('Tax_dict', tax_dict)
-            # print('GRAND_TOTAL', grand_total)
+                # print('1',total)
+                # print('2',tax)
+                # print('3',service_charge)
+            grand_total = float(total) + float(tax) - float(service_charge)
+            # print(type(service_charges))
             context ={
                 'total': total,
                 'tax' : tax,
                 'tax_dict' : tax_dict,
-                'grand_total': grand_total
+                'grand_total': grand_total,
+                'service_charges': service_charges,                
             }     
             return context
 

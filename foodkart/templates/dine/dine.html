@@ -9,7 +9,7 @@
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
   <div class="container">
-    <h2 class="title-page">FoodKart</h2>
+    {% comment %} <h2 class="title-page">FoodKart</h2> {% endcomment %}
     
   </div> <!-- container //  -->
   </section>
@@ -20,110 +20,8 @@
   <div class="container">
   
   <div class="row">
-    <aside class="col-md-3">
-      
-  <div class="card">
-    <article class="filter-group">
-      <header class="card-header">
-        <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
-          <i class="icon-control fa fa-chevron-down"></i>
-          <h6 class="title">Categories</h6>
-        </a>
-      </header>
-      <div class="filter-content collapse show" id="collapse_1" style="">
-        <div class="card-body">
-          
-          <ul class="list-menu">
-          <li><a href="#">People  </a></li>
-          <li><a href="#">Watches </a></li>
-          <li><a href="#">Cinema  </a></li>
-          <li><a href="#">Clothes  </a></li>
-          <li><a href="#">Home items </a></li>
-          <li><a href="#">Animals</a></li>
-          <li><a href="#">People </a></li>
-          </ul>
-  
-        </div> <!-- card-body.// -->
-      </div>
-    </article> <!-- filter-group  .// -->
-    <article class="filter-group">
-      <header class="card-header">
-        <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
-          <i class="icon-control fa fa-chevron-down"></i>
-          <h6 class="title">Sizes </h6>
-        </a>
-      </header>
-      <div class="filter-content collapse show" id="collapse_4" style="">
-        <div class="card-body">
-          <label class="checkbox-btn">
-            <input type="checkbox">
-            <span class="btn btn-light"> XS </span>
-          </label>
-  
-          <label class="checkbox-btn">
-            <input type="checkbox">
-            <span class="btn btn-light"> SM </span>
-          </label>
-  
-          <label class="checkbox-btn">
-            <input type="checkbox">
-            <span class="btn btn-light"> LG </span>
-          </label>
-  
-          <label class="checkbox-btn">
-            <input type="checkbox">
-            <span class="btn btn-light"> XXL </span>
-          </label>
-      </div><!-- card-body.// -->
-      </div>
-    </article> <!-- filter-group .// -->
     
-    <article class="filter-group">
-      <header class="card-header">
-        <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
-          <i class="icon-control fa fa-chevron-down"></i>
-          <h6 class="title">Price range </h6>
-        </a>
-      </header>
-      <div class="filter-content collapse show" id="collapse_3" style="">
-        <div class="card-body">
-          
-          <div class="form-row">
-          <div class="form-group col-md-6">
-            <label>Min</label>
-            <!-- <input class="form-control" placeholder="$0" type="number"> -->
-              <select class="mr-2 form-control">
-              <option value="0">$0</option>
-              <option value="50">$50</option>
-              <option value="100">$100</option>
-              <option value="150">$150</option>
-              <option value="200">$200</option>
-              <option value="500">$500</option>
-              <option value="1000">$1000</option>
-            </select>
-          </div>
-          <div class="form-group text-right col-md-6">
-            <label>Max</label>
-              <select class="mr-2 form-control">
-              <option value="50">$50</option>
-              <option value="100">$100</option>
-              <option value="150">$150</option>
-              <option value="200">$200</option>
-              <option value="500">$500</option>
-              <option value="1000">$1000</option>
-              <option value="2000">$2000+</option>
-            </select>
-          </div>
-          </div> <!-- form-row.// -->
-          <button class="btn btn-block btn-primary">Apply</button>
-        </div><!-- card-body.// -->
-      </div>
-    </article> <!-- filter-group .// -->
-    
-  </div> <!-- card.// -->
-  
-    </aside> <!-- col.// -->
-    <main class="col-md-9">
+    <main class="col-md-12">
   
   <header class="border-bottom mb-4 pb-3">
       <div class="form-inline">
@@ -133,8 +31,8 @@
   </header><!-- sect-heading -->
   
   <div class="row">
-    {% for vendor in vendors %}
-    <div class="col-md-4">
+    {% for vendor in vendors %}    
+    <div class="col-md-3">
       <figure class="card card-product-grid">              
         <div class="img-wrap"> 
           {% if vendor.vendor.userprofile.profile_picture %}
@@ -148,19 +46,24 @@
           <div class="fix-height">
             <h4 class="title"><a class="p-2" style="text-decoration:none" href="{% url 'vendor_details' vendor.vendor_slug %}">{{vendor.vendor_name}}</a></h4>
             
-            {% if vendor.is_open %}
+
+            {% comment %} <h4 class="title"><a class="p-2" style="text-decoration:none" href="#">{{vendor.vendor_name}}</a></h4> {% endcomment %}
+           
+            <!--THIS VODE BELOW-->
+             {% if vendor.is_open %}
             <p><span class="badge badge-pill badge-success">Open </span></p>
             {% else %}
             <p><span class="badge badge-pill badge-danger">Closed </span></p>
-            {% endif %}
+            {% endif %} 
+
+            <!--THIS VODE ABOVE-->
 
             <p class="p-2">{{vendor.vendor.userprofile.address}}</p>
-            {% comment %} <div class="price-wrap mt-2">
-              <span class="price">$1280</span>
-              <del class="price-old">$1980</del>
-            </div> <!-- price-wrap.// --> {% endcomment %}
+            
           </div>
           <a href="{% url 'vendor_details' vendor.vendor_slug %}" class="btn btn-block btn-light">View Menu </a>
+          {% comment %} <a href="#" class="btn btn-block btn-light">View Menu </a> {% endcomment %}
+
         </figcaption>
       </figure>
     </div> <!-- col.// -->  
@@ -168,15 +71,7 @@
   </div> <!-- row end.// -->
   
   
-  <nav class="mt-4" aria-label="Page navigation sample">
-    <ul class="pagination">
-      <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-      <li class="page-item active"><a class="page-link" href="#">1</a></li>
-      <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
-      <li class="page-item"><a class="page-link" href="#">Next</a></li>
-    </ul>
-  </nav>
+ 
   
     </main> <!-- col.// -->
   

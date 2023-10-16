@@ -1,0 +1,90 @@
+{% extends 'vendor/vendorbase.html' %}
+{% load static %}
+
+
+            {% block content %}
+            
+                <div class="container-fluid">                   
+                    {% comment %} <div class="row mb-4">
+
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="card">
+                                <div class="card-header text-center">
+                                    <b>Total Orders </b>
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="#"><h5 class="card-title">{{orders_count}}</h5></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="card">
+                                <div class="card-header text-center">
+                                     <b>Total Revenue</b>
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="#"><h5 class="card-title">₹ {{ total_revenue }}</h5></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="card">
+                                <div class="card-header text-center">
+                                     <b>Monthly Revenue</b>
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="#"><h5 class="card-title">₹ {{ current_month_revenue }}</h5></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="card">
+                                <div class="card-header text-center">
+                                     <b>Account Balance</b>
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="#"><h5 class="card-title">₹ {{ vendor_wallet.balance }}</h5></a>
+                                </div>
+                            </div>
+                        </div>
+                      
+                    </div> {% endcomment %}
+                    
+
+                    <div>
+                        <table class="table table-hover table-light">
+                            <thead class="bg-light">
+                              <tr>
+                                <th scope="col">Orders #</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                              <tr>
+                                <td><b><a href="{% url 'vendor_order_details' order.order_number %}" class="text-dark">{{order.order_number}}</a></b></td>
+                                <td>{{order.name}}</td>
+                                <td>{{order.phone}}</td>                              
+                                <td>₹ {{order.get_total_by_vendor.grand_total}}</td> 
+                                <td>{{order.status}}</td>
+                                <td>{{order.created_at}}</td>
+                                <td><a href="{% url 'vendor_order_details' order.order_number %}" class="btn btn-danger btn-sm">Details</a></td>
+                              </tr>         
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                    </div>
+
+                    
+                </div>
+
+
+                {% endblock content %}

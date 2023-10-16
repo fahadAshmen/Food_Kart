@@ -1,0 +1,75 @@
+{% extends 'admin_area/admin_areaBase.html'%}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">                   
+    <div class="row mb-4">
+
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-header text-center">
+                     <b>Total Orders</b>
+                </div>
+                <div class="card-body text-center">
+                    <a href="#"><h5 class="card-title">{{ order_count }}</h5></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-header text-center">
+                     <b>Total Vendors</b>
+                </div>
+                <div class="card-body text-center">
+                    <a href="#"><h5 class="card-title">{{ vendor_count }}</h5></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="card-header text-center">
+                     <b>Total Customers</b>
+                </div>
+                <div class="card-body text-center">
+                    <a href="#"><h5 class="card-title">{{ customers_count }}</h5></a>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+    
+
+    {% comment %} <div>
+        <table class="table table-hover table-light">
+            <thead class="bg-light">
+              <tr>
+                <th scope="col">Orders #</th>
+                <th scope="col">Name</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Total</th>
+                <th scope="col">Status</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+              <tr>
+                <td><b><a href="#" class="text-dark">{{order.order_number}}</a></b></td>
+                <td>{{order.name}}</td>
+                <td>{{order.phone}}</td>                              
+                <td>₹ {{order.get_total_by_vendor.grand_total}}</td> 
+                <td>{{order.status}}</td>
+                <td>{{order.created_at}}</td>
+                <td><a href="#" class="btn btn-danger btn-sm">Details</a></td>
+              </tr>         
+              {% endfor %}
+            </tbody>
+          </table>
+    </div> {% endcomment %}
+
+    
+</div>
+{% endblock content %}

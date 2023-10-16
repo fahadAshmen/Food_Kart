@@ -7,7 +7,7 @@
                 <div class="container-fluid">                   
                     <div class="row mb-4">
 
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                             <div class="card">
                                 <div class="card-header text-center">
                                     <b>Total Orders </b>
@@ -18,7 +18,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                             <div class="card">
                                 <div class="card-header text-center">
                                      <b>Total Revenue</b>
@@ -29,13 +29,24 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                             <div class="card">
                                 <div class="card-header text-center">
                                      <b>Monthly Revenue</b>
                                 </div>
                                 <div class="card-body text-center">
                                     <a href="#"><h5 class="card-title">₹ {{ current_month_revenue }}</h5></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="card">
+                                <div class="card-header text-center">
+                                     <b>Account Balance</b>
+                                </div>
+                                <div class="card-body text-center">
+                                    <a href="#"><h5 class="card-title">₹ {{ vendor_wallet.balance }}</h5></a>
                                 </div>
                             </div>
                         </div>
@@ -61,8 +72,8 @@
                               <tr>
                                 <td><b><a href="{% url 'vendor_order_details' order.order_number %}" class="text-dark">{{order.order_number}}</a></b></td>
                                 <td>{{order.name}}</td>
-                                <td>{{order.phone}}</td>
-                                <td>₹ {{order.get_total_by_vendor.grand_total}}</td>
+                                <td>{{order.phone}}</td>                              
+                                <td>₹ {{order.get_total_by_vendor.grand_total}}</td> 
                                 <td>{{order.status}}</td>
                                 <td>{{order.created_at}}</td>
                                 <td><a href="{% url 'vendor_order_details' order.order_number %}" class="btn btn-danger btn-sm">Details</a></td>

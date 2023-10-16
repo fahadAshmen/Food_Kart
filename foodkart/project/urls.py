@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from dine import views as DineViews
+# from foody import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +28,7 @@ urlpatterns = [
     path('vendor/',include('vendor.urls')),
     path('dine/',include('dine.urls')),
     path('customer/',include('customer.urls')),
+    path('admin_area/',include('admin_area.urls')),
     
     #CART
     path('cart_page/',DineViews.cart,name='cart'),
